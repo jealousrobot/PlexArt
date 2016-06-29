@@ -1,0 +1,156 @@
+## PlexArt - View all of the artwork for Plex sections at once
+## Copyright (C) 2016  Jason Ellis
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## plex_url - The URL of the Plex server in the format http://<server_name>:<port>
+## server - The name of the Plex server
+## port - The port of the Plex server
+## videos - The XML containing either all of the items in the section or all of 
+##          sections on the server.  Depends on the page_type.
+## page_type - Used to determine what is being rendered on the page.
+##   server - Sections from a server are being displayed.
+##   movie  - A movie section is being displayed
+##   show   - A TV show section is being displayed
+##   artist - A music section is being displayed
+<%page args="plex_url, server, port, videos='', page_type='movie'"/>
+
+        <div id="results_container">
+            <div id="results">
+
+<% 
+    priorValue = 'xx' 
+%>
+
+% for video in videos:
+    ## Do not show photo sections, as there's no artwork to update with those  
+    ## sections.
+    % if video.get('type') != 'photo':
+        <% 
+            ## When creating the navigation section, use the sort title if it's
+            ## available.
+            if video.get('titleSort'):
+                 currentValue = video.get('titleSort')
+            else:
+                 currentValue = video.get('title')
+            
+            video_title = video.get('title')
+                
+            if video.get('childCount') is None:
+                childCount = 1
+            else:
+                childCount = int(video.get('childCount'))
+                
+            childCount += 1
+        %>
+                
+        ## Items that start with a number are all grouped into the pound sign 
+        ## character just like Plex
+        <% 
+            currentValue = currentValue[0:1] 
+            if currentValue in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                currentValue = '#'
+            else:
+                currentValue = currentValue.upper()
+        %>
+        
+        ## If the begining letter has changed, create a link for the new letter.
+        % if priorValue != currentValue:
+                <a name="${currentValue}"></a>
+            <% 
+                priorValue = currentValue 
+            %>
+        % endif
+        
+        ## Set different values based on what is being rendered.
+        ##   drawer_image - Controls wether or not the button for displaying 
+        ##     the season drawer is shown.  This is only needed when processing
+        ##     TV show or music sections. 
+        ##   button_class - Determines which class to assign to the DIV 
+        ##     surrounding the title of the movie, artist, or TV show.  Since
+        ##     TV shows and artists have an extra button to show the season 
+        ##     drawer the width of the DIV needs to be smaller. #}
+        <% 
+            drawer_image = '' 
+            button_class = ''
+            season_class = ''
+            image_name = ''
+            image_height = ''
+                
+            if page_type == 'movie' or page_type == 'server':
+                drawer_image = '' 
+                button_class = 'movie'
+                season_class = ''
+                image_name = ''
+                image_height = ''
+            else:
+                drawer_image = '<img id="drawer-' + video.get('ratingKey') + '" src="static/images/arrow.png" class="video_drawer" width="20" height="20">'
+                button_class = 'tv'
+            
+                ## A placeholder image for a season/album needs to be created.  
+                ## This allows for the drawer to be sized correctly during the
+                ## page load process and allows for smoother animation when the 
+                ## drawer is opened. Different images and classes are needed 
+                ## for albums or seasons since one is 100 pixels tall and the 
+                ## other is 150. 
+                if page_type == 'show':
+                    season_class = 'season_block_tv'
+                    image_name = 'emptyTVThumb.jpg'
+                    image_height = '150'
+            
+                if page_type == 'artist':
+                    season_class = 'season_block_music'
+                    image_name = 'emptyMusicThumb.jpg'
+                    image_height = '100'
+            
+        %>
+        
+        ## If the page_type is a server, output the images for the
+        ## different sections.
+        % if page_type == 'server':
+                <div class="item_block">
+                    <div class="item_image" id="image-${video.get('key')}"><a class="item_link" href="../section?server=${server}&port=${port}&key=${video.get('key')}&section=${video_title}"><img src="${plex_url}${video.get('art')}" width="267" height="150"></a></div>
+                    <div class="item_title" id="title-${video.get('key')}"><a class="item_link" href="../section?server=${server}&port=${port}&key=${video.get('key')}&section=${video_title}">${video_title}</a></div>
+                </div>
+        ## For all other page_type values, this is a section in Plex.  Output 
+        ## the images for the videos in the section.
+        % else:
+                <div class="video_block" id="block-${video.get('ratingKey')}">
+                    <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb" src="${plex_url}${video.get('thumb')}" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" src="${plex_url}${video.get('art')}" width="267" height="150"></div>
+                    <div class="video_title" id="title-${video.get('ratingKey')}"><div class="video_title2 video_title2_${button_class}">${video_title}</div><div class="refresh refresh_${button_class}">${drawer_image}<img id="refresh-${video.get('ratingKey')}" class="video_refresh" src="static/images/refresh.png" width="20" height="20" alt="Refresh Artwork"></div></div>
+            % if page_type == 'show' or page_type == 'artist':
+                    <div class="seasons" id="season-${video.get('ratingKey')}">
+                ## % for i in range(1,childCount):
+                ##        <div class="${season_class}"><div class="season"><div class="season_img"><img src="/static/images/${image_name}" width="100" height="${image_height}"></div><div class="season_title">Temp</div></div></div>
+                ## % endfor
+                <%
+                    seasonHTML = ''
+                    for i in range(1,childCount):
+                        seasonHTML += '<div class="' + season_class + '">'
+                        seasonHTML += '    <div class="season">'
+                        seasonHTML += '        <div class="season_img"><img src="/static/images/' + image_name + '" width="100" height="' + image_height + '"></div>'
+                        seasonHTML += '        <div class="season_title">Title</div>'
+                        seasonHTML += '    </div>'
+                        seasonHTML += '</div>'
+                %>
+${seasonHTML}
+                    </div>
+            % endif
+                </div>
+        % endif 
+    % endif
+% endfor
+
+            </div>
+        </div>

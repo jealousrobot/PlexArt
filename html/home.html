@@ -1,0 +1,56 @@
+## PlexArt - View all of the artwork for Plex sections at once
+## Copyright (C) 2016  Jason Ellis
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+<%include file="header.html" args="page_js='home', title='', header=''"/>
+<%include file="navbar.html" args="videos=''"/>
+
+        <div id="results_container">
+            <div id="results">
+                <div class="form_server">
+            	    <form name="getServer" action="" onsubmit="return validateForm()" method="get">
+                        <div class="server_inputs" id="serverInputs">
+                            <div id="serverNameDiv" onKeyPress="return checkSubmit(event)">Server<br><input type="text" name="server" id="serverName" autofocus></div><br>
+                            <div id="serverPortDiv" onKeyPress="return checkSubmit(event)">Port<br><input type="text" name="port" id="serverPort"></div><br>
+                        </div>
+                        <div class="form_button">
+                            <input type="button" value="Submit" onclick="return validateForm()">
+                        </div>
+                    </form>
+                </div>
+    
+                <div class="form_error" id="serverError">
+                    <div class="ui-widget">
+                        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+    		                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+    		                <strong>Alert:</strong> <span id="errorText"></span></p>
+    	                </div>
+    	            </div>
+                </div>
+            
+            % for server in servers:
+                % if loop.first:
+                <div class="prior_servers">
+                    <div class="prior_title">Existing Servers</div>
+                % endif
+                    <div><a class="prior_server" href="server?server=${server[0].text}&port=${server[1].text}">${server[2].text}</a></div>
+                % if loop.last:
+                </div> 
+                % endif
+            % endfor
+            </div>
+        </div>
+<%include file="footer.html" />
+

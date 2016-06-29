@@ -1,0 +1,381 @@
+/* PlexArt - View all of the artwork for Plex sections at once           */
+/* Copyright (C) 2016  Jason Ellis                                       */
+/*                                                                       */
+/* This program is free software: you can redistribute it and/or modify  */
+/* it under the terms of the GNU General Public License as published by  */
+/* the Free Software Foundation, either version 3 of the License, or     */
+/* (at your option) any later version.                                   */
+/*                                                                       */
+/* This program is distributed in the hope that it will be useful,       */
+/* but WITHOUT ANY WARRANTY; without even the implied warranty of        */
+/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
+/* GNU General Public License for more details.                          */
+/*                                                                       */
+/* You should have received a copy of the GNU General Public License     */
+/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+::-webkit-scrollbar-track {
+  background-color: rgba(0,0,0,.2);
+}
+::-webkit-scrollbar-thumb {
+  min-height: 50px;
+  background-color: rgba(255,255,255,.1);
+  border: 3px solid transparent;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+body {
+  background: #1f1f1f;
+  color: #eeeeee;
+  font-family: Open Sans Regular,Helvetica Neue,Helvetica,Arial,sans-serif;
+  margin: 0;
+  overflow: hidden;
+}
+
+a:link,
+a:visited {
+  text-decoration: none; 
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+#header {
+  color: #e8ab2d;
+  background: #000000;
+  top: 0;
+  right: 0;
+  font-size: 20px;
+  height: 50px;
+  width: 100%;
+  position: fixed;
+}
+
+.header_link:link,
+.header_link:visited {
+  color: #e8ab2d;
+}
+
+.header_left {
+  position: absolute;
+  left: 0; 
+  width: 50%;
+  padding-top: 15px;
+  padding-left: 10px;
+}
+
+.header_right {
+  position: absolute;
+  right: 0; 
+  width: 50%;
+  text-align: right;
+  padding-right: 10px;
+  padding-top: 5px;
+}
+
+
+#navbar {
+  background: #141414; 
+  height: 40px;
+  top: 50px;
+  right: 0;
+  font-size: 14px;
+  padding: 12px;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+}
+
+.navbar_block {
+ display: inline-block; 
+ min-width: 20px;
+}
+
+.navbar_link:link,
+.navbar_link:visited {
+  color: #bbbbbb;
+  text-decoration: none; 
+  display: inline;
+}
+
+.navbar_link:hover,
+.navbar_link:focus {
+  text-decoration: underline;
+}
+
+#results_container {
+  position: relative;
+  top: 90px;
+}
+
+#results {
+  padding: 10px;
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.item_link:link,
+.item_link:visited {
+  color: #ffffff;
+  text-decoration: none; 
+  font-size: 16px;
+  display: inline;
+}
+
+.item_link:hover,
+.item_link:focus {
+  text-decoration: underline;
+}
+
+.item_block {
+  display: inline-block;
+  width: 267px;
+  height: 190px;
+  margin: 5px;
+}
+
+.item_title {
+  background: rgba(0,0,0,.25); 
+  height: 40px;
+  width: 267px;
+  padding: 10px;
+}
+
+.img_link {
+  border: 0;
+}
+
+.video_block {
+  display: inline-block;
+  width: 367px;
+  height: 190px;
+  margin: 5px;
+}
+
+.video_drawer {
+  margin-right: 10px; 
+}
+
+.video_img {
+  background: #000000;
+  max-height: 150px;
+}
+
+.video_thumb {
+  vertical-align: top;
+}
+
+.video_title {
+  background: rgba(0,0,0,.25); 
+  height: 40px;
+  width: 367px;
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-height: 40px;
+  max-width: 367px;
+}
+
+.video_title2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.video_title2_movie {
+  width: 320px;
+}
+
+.video_title2_tv {
+  width: 300px;
+}
+
+.seasons {
+  display: none; 
+  background: #333333;
+  position: relative;  
+  float: left;
+  padding: 10px;
+  margin-right: 15px;
+  width: 10px;
+  z-index: 1000000;
+}
+
+.season_block_tv,
+.season_block_music {
+  display: inline-block;
+  width: 100px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.season_block_tv {
+  height: 170px;
+}
+
+.season_block_music {
+  height: 120px;
+}
+
+.season_img {
+  /* display: inline-block; */
+
+}
+
+.season_title {
+  height: 20px;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.form_server {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 60%;
+  padding: 10px; 
+  
+}
+
+.form_error {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 60%;
+  visibility: hidden;
+}
+
+.server_inputs {
+ width: 60%;
+ margin-left: auto;
+ margin-right: auto; 
+}
+
+.prior_servers {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 60%;
+}
+
+.form_button {
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+}
+
+input[type=submit],
+input[type=button] {
+  width: 100%;
+  background-color: #e8ab2d;
+  border: none;
+  color: #ffffff;
+  text-decoration: none;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  height: 50px;
+  font-size: 16px;
+  margin: auto;
+  text-align: center;
+}
+
+#form_submit {
+  visibility: hidden;
+}
+
+input[type=text] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 20px;
+    color: #444444;
+    border-radius: 6px;
+}
+
+.prior_servers {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  width: 60%;
+}
+
+.prior_server {
+  font-size: 18px;
+  padding-top: 15px;
+  cursor: pointer;
+  display: block;
+  border-radius: 6px;
+  background: #333333;
+  padding: 15px; 
+  width: 60%;
+  height: 50px;; 
+  font-weight: bold;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.prior_server:link,
+.prior_server:visited {
+  color: #ffffff;
+  text-decoration: none; 
+}
+
+.prior_server:hover,
+.prior_server:focus {
+  background: #e8ab2d;
+}
+
+.prior_title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.refresh {
+  position: relative;
+  display: inline;
+  float: right;
+  cursor: pointer;
+  width: 23px;
+}
+
+.refresh_movie {
+  width: 23px;
+}
+
+.refresh_tv {
+  width: 43px;
+}
+
+.pointer {
+  cursor: pointer;
+}

@@ -1,0 +1,48 @@
+## PlexArt - View all of the artwork for Plex sections at once
+## Copyright (C) 2016  Jason Ellis
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+<%page args="videos=''"/>
+        <div id="navbar">
+<% 
+    priorValue = 'xx' 
+%>
+% for video in videos:
+    ## Use the sort title for the video/section if its available.  If the sort 
+    ## title hasn't been set, it will be blank.
+    <% 
+        if video.get('titleSort'):
+            currentValue = video.get('titleSort')
+        else:
+            currentValue = video.get('title')
+    %>          
+    ## Items that start with a number are all grouped into the pound sign 
+    ## character just like Plex does.
+    <% 
+        currentValue = currentValue[0:1] 
+        if currentValue in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+            currentValue = '#'
+        else:
+            currentValue = currentValue.upper()
+    %>
+    ## If the begining letter has changed, create a link for the new letter.
+    % if priorValue != currentValue:
+            <div class="navbar_block"><a class="navbar_link" href="#${currentValue}">${currentValue}</a></div>
+        <% 
+            priorValue = currentValue 
+        %>
+    % endif
+% endfor
+        </div>
