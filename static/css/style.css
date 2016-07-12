@@ -1,18 +1,18 @@
-/* PlexArt - View all of the artwork for Plex sections at once           */
-/* Copyright (C) 2016  Jason Ellis                                       */
-/*                                                                       */
-/* This program is free software: you can redistribute it and/or modify  */
-/* it under the terms of the GNU General Public License as published by  */
-/* the Free Software Foundation, either version 3 of the License, or     */
-/* (at your option) any later version.                                   */
-/*                                                                       */
-/* This program is distributed in the hope that it will be useful,       */
-/* but WITHOUT ANY WARRANTY; without even the implied warranty of        */
-/* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         */
-/* GNU General Public License for more details.                          */
-/*                                                                       */
-/* You should have received a copy of the GNU General Public License     */
-/* along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/* PlexArt - View all of the artwork for Plex sections at once           
+   Copyright (C) 2016  Jason Ellis                                       
+                                                                         
+   This program is free software: you can redistribute it and/or modify  
+   it under the terms of the GNU General Public License as published by  
+   the Free Software Foundation, either version 3 of the License, or     
+   (at your option) any later version.                                   
+                                                                         
+   This program is distributed in the hope that it will be useful,       
+   but WITHOUT ANY WARRANTY; without even the implied warranty of        
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         
+   GNU General Public License for more details.                          
+                                                                         
+   You should have received a copy of the GNU General Public License     
+   along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 
 * {
@@ -116,6 +116,21 @@ a:focus {
   text-decoration: underline;
 }
 
+.navbar_img_block {
+  position: relative;
+  display: inline;
+  float: right;
+  cursor: pointer;
+}
+
+#navbar_thumbs {
+  margin-right: 10px;
+}
+
+#navbar_list {
+  margin-right: 0px; 
+}
+
 #results_container {
   position: relative;
   top: 90px;
@@ -144,7 +159,7 @@ a:focus {
   display: inline-block;
   width: 267px;
   height: 190px;
-  margin: 5px;
+  margin: 5px; 
 }
 
 .item_title {
@@ -170,8 +185,9 @@ a:focus {
 }
 
 .video_img {
-  background: #000000;
+  
   max-height: 150px;
+  background: rgba(0,0,0,.5); 
 }
 
 .video_thumb {
@@ -378,4 +394,64 @@ input[type=text] {
 
 .pointer {
   cursor: pointer;
+}
+
+.list_video_block {
+  display: inline-block;
+  height: 190px;
+  margin: 5px;
+  width: 100%;
+}
+
+.list_video_title {
+  background: rgba(0,0,0,.25); 
+  height: 40px;
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  max-height: 40px;
+}
+
+.list_video_title2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.list_details {
+  display: inline-block;
+  vertical-align: top;
+  height: 150px;
+  padding: 10px;
+  width: auto;
+  max-height: 150px;
+  min-width: 200px;
+}
+
+.list_title {
+  color: #777777;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.list_item {
+  color: #999999;
+  font-size: 13px;
+}
+
+.list_genre {
+  padding-bottom: 10px;
+}
+
+.list_collection {
+  padding-bottom: 10px;
+}
+
+.list_playlist {
+
 }

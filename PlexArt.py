@@ -33,6 +33,49 @@ import mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
+class PlexArtAPI(object):
+    exposed = True  
+    
+    @cherrypy.tools.accept(media='text/plain')
+    def GET(self, server, port, rating_key):
+        playlist_out = ''
+        
+        playlistURL = 'http://' + server + ':' + port + '/playlists'
+        
+        playlistsXML = ET.ElementTree(file=urllib2.urlopen(playlistURL))
+        playlists = playlistsXML.getroot()
+        
+        for playlist in playlists:
+            playlist_title = playlist.get('title')
+            playlist_key = playlist.get('key')
+            
+            specificPlaylistURL = 'http://' + server + ':' + port + playlist_key 
+            #specificPlaylistURL = 'http://melody.local:32400/playlists/73508/items'
+            
+            playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(specificPlaylistURL))
+            playlist_items = playlist_items_xml.getroot()  
+            
+            for video in playlist_items:
+                playlist_rating_key = video.get('ratingKey')
+                playlist_gp_key = video.get('grandparentRatingKey')
+                
+                # Check if the grandparent key is populated.  If it is, 
+                # this item is an episode or song.  In that case, we use
+                # the grandparent key as that is the TV show or artist that
+                # this item belongs to.
+                if not playlist_gp_key:
+                    key_to_use = playlist_rating_key
+                else:
+                    key_to_use = playlist_gp_key
+                    
+                if key_to_use == rating_key:
+                    if playlist_out:
+                        playlist_out += ' / ' + playlist_title
+                    else:
+                        playlist_out = playlist_title
+                
+        return playlist_out
+
 class PlexArt(object):
     
     def __init__(self):
@@ -91,6 +134,7 @@ class PlexArt(object):
         # Determine if the server is saved in the XML file        
         found = False
         for instance in self.servers: 
+            # instance[0] accesses the server tag and [1] the port tag.
             if server == instance[0].text and port == instance[1].text:
                 # Check if the friendly name of the server has been updated
                 # since the last time the server was visited by PlexArt.  If so
@@ -133,7 +177,7 @@ class PlexArt(object):
         return server_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, videos=videos)
         
     @cherrypy.expose
-    def section(self, server='localhost', port='32400', key='1', section='<empty>'):        
+    def section(self, server='localhost', port='32400', key='1', section='<empty>', display_mode='thumbs'):        
         # Set the base URL for the server.
         plex_url = self.__set_plex_url(server, port)
         
@@ -149,6 +193,95 @@ class PlexArt(object):
         library = ET.ElementTree(file=urllib2.urlopen(plex_xml_path))
         videos = library.getroot()
         
+        list_dict = {}
+        
+        # If the display mode is list, buid dictionaries that will hold the 
+        # genres, collections, and playlist info.  For each dictionary, the
+        # key of the dictionary is the key for the video and the value is a 
+        # list that contains each of the genre/collection/playlists the 
+        # video belongs to.  For playlists, if the item in the playlist is an
+        # an episode/song, the entire show/artist is considered part of the 
+        # playlist.
+        if display_mode == 'list':
+            genre_dict = {}
+            coll_dict = {}
+            pl_dict = {}
+            
+            # The commented out code loads the dictionaries for the genres and
+            # collections.  Since it needs to get the XML for each video it's
+            # sloooooooow.  I'm keeping it here for reference only.  Getting 
+            # this info is now done through AJAX calls in javascript once the
+            # page loads.
+            #for video in videos:
+            #    rating_key = video.get('ratingKey')
+            #    
+            #    # Get the XML for the video.  While the XML for the video from
+            #    # the section has a lot of info, it only has the first three
+            #    # genres or collections.  We need to get the XML for the video
+            #    # to get all of the items.
+            #    video_xml_path = plex_url + '/library/metadata/' + rating_key
+            #    video_xml = ET.ElementTree(file=urllib2.urlopen(video_xml_path))
+            #    video_xml_root = video_xml.getroot()
+            #    
+            #    for genre in video_xml_root.iter('Genre'):
+            #        if genre_dict.has_key(rating_key):
+            #            genre_dict[rating_key].append(genre.get('tag'))
+            #        else:
+            #            genre_dict[rating_key] = [genre.get('tag')]
+            #            
+            #    for collection in video_xml_root.iter('Collection'):
+            #        if coll_dict.has_key(rating_key):
+            #            coll_dict[rating_key].append(collection.get('tag'))
+            #        else:
+            #            coll_dict[rating_key] = [collection.get('tag')]   
+            for video in videos:        
+                rating_key = video.get('ratingKey')
+                genre_dict[rating_key] = ['loading...']
+                coll_dict[rating_key] = ['loading...']
+                    
+            # Get the list of playlists
+            playlists_XML = ET.ElementTree(file=urllib2.urlopen('%s/playlists' % plex_url))
+            playlists = playlists_XML.getroot()
+            
+            # Loop through each playlist and get the individual items in the
+            # list.
+            for playlist in playlists:
+                playlist_title = playlist.get('title')
+                playlist_key = playlist.get('key')
+                
+                # Get the individual items that make up the playlist.
+                playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(plex_url + playlist_key))
+                playlist_items = playlist_items_xml.getroot()
+                
+                # Loop through each item in the playlist.
+                for video in playlist_items:
+                    rating_key = video.get('ratingKey')
+                    playlist_gp_key = video.get('grandparentRatingKey')
+                    
+                    # Check if the grandparent key is populated.  If it is, 
+                    # this item is an episode or song.  In that case, we use
+                    # the grandparent key as that is the TV show or artist that
+                    # this item belongs to.
+                    if not playlist_gp_key:
+                        key_to_use = rating_key
+                    else:
+                        key_to_use = playlist_gp_key
+                    
+                    # Determine if this video has been added to the dictionay.
+                    if pl_dict.has_key(key_to_use):
+                        # Determine if this playlist has been added to the list
+                        # that makes up the value portion of the dictionary 
+                        # item.  This is needed since the playlist can contain 
+                        # multiple episodes/songs from the same show/artist and
+                        # the playlist only needs to be added once to the show/
+                        # artist.
+                        if pl_dict[key_to_use].count(playlist_title) == 0:
+                            pl_dict[key_to_use].append(playlist_title)
+                    else:
+                        pl_dict[key_to_use] = [playlist_title]
+            
+            list_dict = {'genre' : genre_dict, 'collection' : coll_dict, 'playlist' : pl_dict}
+                        
         # Get the viewGroup attribute for the root node.  This determines what type
         # of section this is.  Values are:
         #  artist - music sections
@@ -157,7 +290,7 @@ class PlexArt(object):
         page_type = videos.attrib['viewGroup']
         
         section_template = lookup.get_template('section.html')
-        return section_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, page_type=page_type, section=section, videos=videos)
+        return section_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, page_type=page_type, section=section, videos=videos, display_mode=display_mode, lists=list_dict)
     
 
 # Configure CherryPy so that the webserver is visible on the LAN, not just the
@@ -174,10 +307,17 @@ if __name__ == '__main__':
              'tools.sessions.on': True,
              'tools.staticdir.root': os.path.abspath(os.getcwd())
          },
+         '/playlist': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+         },
          '/static': {
              'tools.staticdir.on': True,
              'tools.staticdir.dir': './static'
          },
-     }
-     
-    cherrypy.quickstart(PlexArt(), '/', conf)
+    }
+    webapp = PlexArt()
+    webapp.playlist = PlexArtAPI() 
+    #cherrypy.quickstart(PlexArt(), '/', conf)
+    cherrypy.quickstart(webapp, '/', conf)

@@ -14,7 +14,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-<%page args="videos=''"/>
+<%page args="videos='', page_type='none'"/>
         <div id="navbar">
 <% 
     priorValue = 'xx' 
@@ -45,4 +45,9 @@
         %>
     % endif
 % endfor
+% if page_type != 'none':
+            <div class="navbar_img_block">
+                <img src="static/images/thumbs.png" height="20" width="20" id="navbar_thumbs"><img src="static/images/list.png" height="20" width="20" id="navbar_list">
+            </div>
+% endif
         </div>
