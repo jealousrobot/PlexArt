@@ -1,39 +1,50 @@
-## PlexArt - View all of the artwork for Plex sections at once
-## Copyright (C) 2016  Jason Ellis
-##
-## This program is free software: you can redistribute it and/or modify
-## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation, either version 3 of the License, or
-## (at your option) any later version.
-##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
-##
-## You should have received a copy of the GNU General Public License
-## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+<%doc>
+PlexArt - View all of the artwork for Plex sections at once
+Copyright (C) 2016  Jason Ellis
 
-## server - The name of the server
-## port - The port of the Plex server
-## plex_url - The URL of the Plex server in the format http://<server_name>:<port>
-## friendly_name - The friendly name of the server.  This is what's shown in 
-##   drop down boxes and lists in Plex.
-## page_type - What section is being rendered.  Valid values are music, artist, 
-##   and show.
-## section - The name of the section
-## videos - The XML containing either all of the items in the section or all of 
-##   sections on the server.  Depends on the page_type.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Input variables to the page:
+  server - The name of the server
+  port - The port of the Plex server
+  plex_url - The URL of the Plex server in the format 
+    http://<server_name>:<port>
+  friendly_name - The friendly name of the server.  This is what's shown in 
+    drop down boxes and lists in Plex.
+  page_type - What section is being rendered.  Valid values are music, artist, 
+    and show.
+  section - The name of the section
+  videos - The XML containing either all of the items in the section or all of 
+    sections on the server.  Depends on the page_type.   
+  display_mode - Whether the videos should be displayed in a series of thumbs
+    or as a list with additional details. 
+  lists - A dictionary three dictionaries.  This dictionaries in turn hav a 
+    list of the genres, collections, and playlists that videos belong to.  
+</%doc>
 <%
     title = ' : ' + friendly_name + ' : ' + section
     header = ' : <a class="header_link" href="server?server=' + server + '&port=' + port + '">' + friendly_name + '</a> : ' + section
     
     meta_tags = '<meta name="slider" id="metaSlider" content="">'
     meta_tags += '<meta name="cols" id="metaCols" content="">'
+    meta_tags += '<meta name="server" id="metaServer" content="' + server + '">'
+    meta_tags += '<meta name="port" id="metaPort" content="' + port + '">'
     meta_tags += '<meta name="plex_url" id="metaPlexUrl" content="' + plex_url + '">'
     meta_tags += '<meta name="section_type" id="metaSectionType" content="' + page_type + '">'
+    meta_tags += '<meta name="display_mode" id="metaDisplayMode" content="' + display_mode + '">'
 %>
 <%include file="header.html" args="page_js='section', title=title, header=header, meta_tags=meta_tags"/>
 <%include file="navbar.html" args="videos=videos"/>
 <%include file="body.html" args="plex_url=plex_url, server=server, port=port, videos=videos, page_type=page_type"/>
-<%include file="footer.html"/>
+<%include file="footer.html"/> 
