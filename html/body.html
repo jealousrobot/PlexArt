@@ -30,7 +30,6 @@
 <%page args="plex_url, server, port, videos='', page_type='movie'"/>
         <div id="results_container">
             <div id="results">
-
 <% 
     priorValue = 'xx' 
 %>
@@ -196,7 +195,7 @@
                 <%
                     seasonHTML = ''
                     for i in range(1,childCount):
-                        seasonHTML += '<div class="' + season_class + '">'
+                        seasonHTML += '<div class="' + season_class + ' jason' + str(childCount) + '">'
                         seasonHTML += '    <div class="season">'
                         seasonHTML += '        <div class="season_img"><img src="/static/images/' + image_name + '" width="100" height="' + image_height + '"></div>'
                         seasonHTML += '        <div class="season_title">Title</div>'

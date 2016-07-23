@@ -27,10 +27,39 @@ $(document).ready(function(){
     return document.getElementById(metaName).getAttribute('content'); 
   }
   
+  function getDisplayModeCookie() {
+    // Set the cookie for the page and the display mode.
+    var cookieDisplayMode = 'displayMode-' + Cookies.get('server') + '-' + Cookies.get('key');
+      
+    return cookieDisplayMode;
+  }
+  
+  function getPlexURL() {
+    //var plexURL = 'http://' + Cookies.get('server') + ':' + Cookies.get('port'); 
+    //var plexURL = 'http://' + getMetaValue('metaServer') + ':' + getMetaValue('metaPort');
+    var plexURL = gPlexURL;
+    
+    return plexURL;
+  }
+  
   function thumbsListRedirect(displayMode) {
+    
+    // Get the URL for the current page.
     var queryString = window.location.search;
+    
+    // Get the parameters from the URL.
     var URLVariables = queryString.split('&');
-    var newURL = 'section' + URLVariables[0] + '&' + URLVariables[1] + '&' + URLVariables[2] + '&' + URLVariables[3] + '&display_mode=' + displayMode;
+    
+    // Rebuild the URL with the existing parameters and setting the
+    // display_mode to the selected value.
+    var newURL = 'section' + URLVariables[0] + '&' + URLVariables[1] + '&' + URLVariables[2] + '&' + URLVariables[3];
+      
+    Cookies.set(getDisplayModeCookie(), displayMode);
+
+    //newURL += '=' + displayMode;
+    
+    // Call the new URL.  This method will cause the page to refresh without
+    // putting a new entry in the history.
     window.location.replace(newURL); 
   }
     
@@ -86,6 +115,7 @@ $(document).ready(function(){
     var elementID;
     var seasonID;
     var stopRowCheck = 0
+    var totalWidth;
     
     // Determine what the height of the results DIV should be.  It is the
     // size of the display area minus the heights of the header and the nav
@@ -93,8 +123,11 @@ $(document).ready(function(){
     var resultsHeight = window.innerHeight - 90;
     $('#results').css('height', resultsHeight);
     
-    var section_type = getMetaValue('metaSectionType');
-    var display_mode = getMetaValue('metaDisplayMode');
+    //var section_type = getMetaValue('metaSectionType');
+    //var display_mode = getMetaValue('metaDisplayMode');
+    var section_type = gSectionType;
+    displayModeCookie = getDisplayModeCookie();
+    var display_mode = Cookies.get(displayModeCookie);
     
     // Set the width of the drawer that shows seasons/albums.
     if (section_type == 'show' || section_type == 'artist')
@@ -103,44 +136,26 @@ $(document).ready(function(){
         totalWidth = '100%';
       }
       else {
-        // Loop through the video blocks until finding one on a different
-        // row.  This will tell us how many images are on a row, which in
-        // in turn can be used to determine how wide to make the drawer.
+        // Get the array of video_block elements.  This is to get the size of 
+        // one of the blocks.
         var videoBlocks = document.getElementsByClassName('video_block'); 
-        var upperLeftTop;
-        var upperLeftLeft;
-        var upperRightLeft;
-        var totalWidth;
-        for (var i=0; i<videoBlocks.length; i++) {
-          if (i == 0) {
-            // Set the values for the upper left most block.
-            upperLeftTop = videoBlocks[i].offsetTop;
-            upperLeftLeft = videoBlocks[i].offsetLeft;
-          }
-          else {
-            // If the offsetTop value changes then this block is on
-            // the next line.  The width can now be calculated
-            if (upperLeftTop != videoBlocks[i].offsetTop) {
-              // Width of the shelf is the position of the left 
-              // side of the last image on the row minus the left 
-              // position of the first image in the row.  Add to 
-              //that the width of the video block.
-              totalWidth = upperRightLeft - upperLeftLeft + videoBlocks[i].offsetWidth;
-              // Update the width property in the CSS of the seasons DIV.
-              $('.seasons').css('width', totalWidth);
-              
-              // Set the number of columns.
-              document.getElementById('metaCols').getAttribute('content', i-1);
-              
-              // Exit the loop as we now know what the width of the 
-              // drawer should be.
-              break;
-            }
-            else {
-              upperRightLeft = videoBlocks[i].offsetLeft;
-            }
-          }                      
-        }   
+        
+        // Get the overall style of the block.
+        var blockStyle = videoBlocks[0].currentStyle || window.getComputedStyle(videoBlocks[0]);
+        
+        // Get the full width of the block, this is the width of the element 
+        // along with the margins.
+        var blockWidth = videoBlocks[0].offsetWidth + 
+          parseFloat(blockStyle.marginLeft) +
+          parseFloat(blockStyle.marginRight);
+        
+        // Determine the total number of elements that can fit inside the 
+        // results DIV.
+        var nbrElements = Math.trunc($('#results_container').width() / blockWidth);
+        
+        // Set the width of the drawer to be the width of the number of elements
+        // that will fit in the results section.
+        totalWidth = nbrElements * blockWidth;
       }
             
       $('.seasons').css('width', totalWidth); 
@@ -148,7 +163,8 @@ $(document).ready(function(){
       // Determine if there is an open drawer.  If so, reposition as it's
       // now probably no longer aligned to the left edge of the display
       // area.  
-      var drawerID = getMetaValue('metaSlider');
+      //var drawerID = getMetaValue('metaSlider');
+      var drawerID = gDrawerID;
     
       if (drawerID != null) {
         positionDrawer(drawerID);
@@ -171,11 +187,13 @@ $(document).ready(function(){
       
     var metaSetValue;
     
-    var plex_url = getMetaValue('metaPlexUrl');
+    //var plex_url = getMetaValue('metaPlexUrl');
+    var plex_url = getPlexURL();
     
     // Get the content of the meta tag metaSlider, which contains the 
     // currently open season block.
-    var slider = getMetaValue('metaSlider');
+    //var slider = getMetaValue('metaSlider');
+    var slider = gDrawerID;
     
     if (slider != null) {
       $(slider).slideUp('slow');
@@ -229,13 +247,17 @@ $(document).ready(function(){
       metaSetValue = "x";
     }
     
-    document.getElementById('metaSlider').setAttribute('content', metaSetValue);
+    //document.getElementById('metaSlider').setAttribute('content', metaSetValue);
+    gDrawerID = metaSetValue;
   }
      
   function refreshVideo(elementName) {
-    var plexURL = getMetaValue('metaPlexUrl');
-    var sectionType = getMetaValue('metaSectionType');
-    var displayMode = getMetaValue('metaDisplayMode');
+    //var plexURL = getMetaValue('metaPlexUrl');
+    //var sectionType = getMetaValue('metaSectionType');
+    //var displayMode = getMetaValue('metaDisplayMode');
+    var plexURL = getPlexURL();
+    var sectionType = gSectionType;
+    var displayMode = Cookies.get(getDisplayModeCookie());
     
     var elementID = getKey(elementName);
     var thumbID = '#thumb-' + elementID;
@@ -266,8 +288,10 @@ $(document).ready(function(){
     
     function refreshData() {
       var playlistOut = '';
-      var plexServer = getMetaValue('metaServer');
-      var plexPort = getMetaValue('metaPort');
+      //var plexServer = getMetaValue('metaServer');
+      //var plexPort = getMetaValue('metaPort');
+      var plexServer = gServer;
+      var plexPort = gPort;
       
       $.ajax({
         type: 'GET',
@@ -397,6 +421,8 @@ $(document).ready(function(){
     //showSeasons($(this).attr("id"));
     var seasonID = '#season-' + getKey($(this).attr('id'));
     positionDrawer(seasonID);
+    
+    alert(gServer + ' ' + gPort);
   });
   
   $(".video_title").click(function(){
@@ -432,7 +458,8 @@ $(document).ready(function(){
   });
     
   // Get the section type from the meta tag.
-  var section_type = getMetaValue('metaSectionType');
+  //var section_type = getMetaValue('metaSectionType');
+  var section_type = gSectionType;
     
   // Calling set_dimensions here will set the width for all of the 
   // season DIVs after the page has loaded.
@@ -448,12 +475,14 @@ $(document).ready(function(){
   }
   
   // If the display mode is list, load the meta data for the video.
-  var display_mode = getMetaValue('metaDisplayMode');
+  //var display_mode = getMetaValue('metaDisplayMode');
+  var display_mode = Cookies.get(getDisplayModeCookie());
   if (display_mode == 'list') {
     // Get all of the list detail elements.
     var listDetails = document.getElementsByClassName('list_details'); 
      
-    var plexURL = getMetaValue('metaPlexUrl');
+    //var plexURL = getMetaValue('metaPlexUrl');
+    var plexURL = getPlexURL();
          
     // Loop through the list detail elements.
     for (i=0; i<listDetails.length; i++) {  
@@ -494,20 +523,20 @@ $(document).ready(function(){
         // genres assigned to this video.
         $(xml).find('Genre').each(function()
         {
-            if (genre)
-              genre += ' / ' + $(this).attr('tag');
-            else
-              genre = $(this).attr('tag');
+          if (genre)
+            genre += ' / ' + $(this).attr('tag');
+          else
+            genre = $(this).attr('tag');
         });
          
         // Loop through the collection tags in the XML and get the names of the
         // collections assigned to this video.
         $(xml).find('Collection').each(function()
         {
-            if (collection)
-              collection += ' / ' + $(this).attr('tag');
-            else
-              collection = $(this).attr('tag');
+          if (collection)
+            collection += ' / ' + $(this).attr('tag');
+          else
+            collection = $(this).attr('tag');
         });
          
         // Update the HTML with the genres and collections assigned to this 

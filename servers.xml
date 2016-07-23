@@ -2,29 +2,66 @@
 <servers>
   
   
+  
+  
   <server>
+    
+    
     
     
     <address>melody.local</address>
     
     
+    
+    
     <port>32400</port>
     
     
+    
+    
     <friendlyName>Melody</friendlyName>
+    
+    
+  
+  
+  </server>
+  
+  
+
+  
+  <server>
+    
+    
+    <address>127.0.0.1</address>
+    
+    
+    <port>32400</port>
+    
+    
+    <friendlyName>Anakin</friendlyName>
+    
+  
+  </server>
+  
+  
+  <server>
+    
+    
+    <address>localhost</address>
+    
+    
+    <port>32400</port>
+    
+    
+    <friendlyName>Poe</friendlyName>
     
   
   </server>
   
 
   <server>
-    <address>127.0.0.1</address>
+    <address>cabin.local</address>
     <port>32400</port>
-    <friendlyName>Anakin</friendlyName>
-  </server>
-  <server>
-    <address>localhost</address>
-    <port>32400</port>
-    <friendlyName>Anakin</friendlyName>
+    <friendlyName>Cabin</friendlyName>
   </server>
 </servers>

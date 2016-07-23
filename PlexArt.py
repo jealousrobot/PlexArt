@@ -19,6 +19,7 @@ import xml.dom.minidom as minidom
 import urllib2
 import os
 import sys
+import string
 
 DB_STRING = 'plexarts.db'
 SERVER_FILE = 'servers.xml'
@@ -177,7 +178,29 @@ class PlexArt(object):
         return server_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, videos=videos)
         
     @cherrypy.expose
-    def section(self, server='localhost', port='32400', key='1', section='<empty>', display_mode='thumbs'):        
+    #def section(self, server='localhost', port='32400', key='1', section='<empty>', display_mode='thumbs'):
+    def section(self, server='localhost', port='32400', key='1', section='<empty>'):   
+        cookieSet = cherrypy.response.cookie
+        
+        # Retrieve the cookie for the display mode (thumbs or list).
+        cookie_display_mode = 'displayMode-'+str(server)+'-'+str(key)
+        cookie_display_mode = urllib2.quote(cookie_display_mode)
+        #cookieSet[cookie_display_mode] = 'venture'
+        
+        # Use cookies to save the values of the URL parameters.  This seems 
+        # easier than trying to deconstruct the URL query string in javascript.
+        cookieSet['server'] = server
+        cookieSet['port'] = port
+        cookieSet['key'] = key
+        cookieSet['section'] = section
+
+        try:
+            cookie = cherrypy.request.cookie
+            display_mode = cookie[cookie_display_mode].value
+        except KeyError:
+            display_mode = 'thumbs'
+            cookieSet[cookie_display_mode] = display_mode
+        
         # Set the base URL for the server.
         plex_url = self.__set_plex_url(server, port)
         
@@ -288,6 +311,8 @@ class PlexArt(object):
         #  movie  - movie sections
         #  show   - TV show sections
         page_type = videos.attrib['viewGroup']
+        
+        cookieSet['section_type'] = page_type
         
         section_template = lookup.get_template('section.html')
         return section_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, page_type=page_type, section=section, videos=videos, display_mode=display_mode, lists=list_dict)

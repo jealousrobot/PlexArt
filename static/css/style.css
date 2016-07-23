@@ -53,6 +53,10 @@ a:focus {
   text-decoration: underline;
 }
 
+#noscript {
+  
+}
+
 #header {
   color: #e8ab2d;
   background: #000000;
