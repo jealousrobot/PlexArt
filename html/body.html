@@ -30,7 +30,6 @@
 <%page args="plex_url, server, port, videos='', page_type='movie'"/>
         <div id="results_container">
             <div id="results">
-
 <% 
     priorValue = 'xx' 
 %>
@@ -102,6 +101,7 @@
             season_class = ''
             image_name = ''
             image_height = ''
+            title_class = ''
                 
             if page_type == 'movie' or page_type == 'server':
                 drawer_image = '' 
@@ -110,9 +110,11 @@
                 image_name = ''
                 image_height = '150'
                 video_block_class = ''
+                title_class = 'video_title2_movie'
             else:
                 drawer_image = '<img id="drawer-' + video.get('ratingKey') + '" src="static/images/arrow.png" class="video_drawer" width="20" height="20">'
                 button_class = 'tv'
+                title_class = 'video_title2_tv'
             
                 ## A placeholder image for a season/album needs to be created.  
                 ## This allows for the drawer to be sized correctly during the
@@ -129,12 +131,17 @@
                     season_class = 'season_block_music'
                     image_name = 'emptyMusicThumb.jpg'
                     image_height = '100'
+                    
+            if display_mode == 'list':
+              title_class = 'video_title2_list'
                 
             if page_type != 'server':    
                 if display_mode == 'thumbs':
                     video_block_class = ''
+                    hide_details = 'style="display:none;"'
                 else:
                     video_block_class = 'list_'
+                    hide_details = ''
         %>
         
         ## If the page_type is a server, output the images for the
@@ -149,31 +156,30 @@
         % else:
                 <div class="${video_block_class}video_block" id="block-${video.get('ratingKey')}">
                     <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb ${video_key}" src="${plex_url}${video.get('thumb')}" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" class="${video_key}" src="${plex_url}${video.get('art')}" width="267" height="150">
-            % if display_mode == 'list':
-                <%
-                    def process_list( list_name):
-                        list_out = ''
-                        list = lists[list_name]
-                        
-                        for key in list:
-                            if key == video.get('ratingKey'):
-                                for list_item in list[key]:
-                                    if not list_out:
-                                        list_out = list_item
-                                    else:
-                                        list_out = list_out + ' / ' + list_item
-                         
-                        if not list_out:
-                            list_out = 'None'
-                             
-                        return list_out
-                                    
-                    genre_out = process_list('genre')
-                    collection_out = process_list('collection')
-                    playlist_out = process_list('playlist')
+            <%
+                def process_list( list_name):
+                    list_out = ''
+                    list = lists[list_name]
                     
-                %>
-                    <div class="list_details" id="list_details-${video.get('ratingKey')}">
+                    for key in list:
+                        if key == video.get('ratingKey'):
+                            for list_item in list[key]:
+                                if not list_out:
+                                    list_out = list_item
+                                else:
+                                    list_out = list_out + ' / ' + list_item
+                     
+                    if not list_out:
+                        list_out = 'None'
+                         
+                    return list_out
+                                
+                genre_out = process_list('genre')
+                collection_out = process_list('collection')
+                playlist_out = process_list('playlist')
+                
+            %>
+                    <div class="list_details" id="list_details-${video.get('ratingKey')}" ${hide_details}>
                         <div class="list_genre" id="list_genre-${video.get('ratingKey')}">
                             <div class="list_title">Genres:</div>
                             <div class="list_item ${video_key}" id="list_item_genre-${video.get('ratingKey')}">${genre_out}</div>
@@ -187,16 +193,15 @@
                             <div class="list_item"id="list_item_playlist-${video.get('ratingKey')}">${playlist_out}</div>
                         </div>
                     </div>
-            % endif
                 </div>
-                    <div class="${video_block_class}video_title" id="title-${video.get('ratingKey')}"><div class="video_title2 video_title2_${button_class}">${video_title}</div><div class="refresh refresh_${button_class}">${drawer_image}<img id="refresh-${video.get('ratingKey')}" class="video_refresh" src="static/images/refresh.png" width="20" height="20" alt="Refresh Artwork"></div></div>
+                    <div class="${video_block_class}video_title" id="title-${video.get('ratingKey')}"><div class="video_title2 ${title_class}">${video_title}</div><div class="refresh refresh_${button_class}">${drawer_image}<img id="refresh-${video.get('ratingKey')}" class="video_refresh" src="static/images/refresh.png" width="20" height="20" alt="Refresh Artwork"></div></div>
                     
             % if page_type == 'show' or page_type == 'artist':
                     <div class="seasons" id="season-${video.get('ratingKey')}">
                 <%
                     seasonHTML = ''
                     for i in range(1,childCount):
-                        seasonHTML += '<div class="' + season_class + '">'
+                        seasonHTML += '<div class="' + season_class + ' jason' + str(childCount) + '">'
                         seasonHTML += '    <div class="season">'
                         seasonHTML += '        <div class="season_img"><img src="/static/images/' + image_name + '" width="100" height="' + image_height + '"></div>'
                         seasonHTML += '        <div class="season_title">Title</div>'

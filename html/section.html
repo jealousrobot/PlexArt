@@ -36,6 +36,14 @@ Input variables to the page:
     title = ' : ' + friendly_name + ' : ' + section
     header = ' : <a class="header_link" href="server?server=' + server + '&port=' + port + '">' + friendly_name + '</a> : ' + section
     
+    js_script = '<script>'
+    js_script += '  var gDrawerID = "";'
+    js_script += '  var gServer = "' + server + '";'
+    js_script += '  var gPort = "' + port + '";'
+    js_script += '  var gSectionType = "' + page_type + '";'
+    js_script += '  var gPlexURL = "' + plex_url + '";'
+    js_script += '</script>'
+    
     meta_tags = '<meta name="slider" id="metaSlider" content="">'
     meta_tags += '<meta name="cols" id="metaCols" content="">'
     meta_tags += '<meta name="server" id="metaServer" content="' + server + '">'
@@ -44,7 +52,7 @@ Input variables to the page:
     meta_tags += '<meta name="section_type" id="metaSectionType" content="' + page_type + '">'
     meta_tags += '<meta name="display_mode" id="metaDisplayMode" content="' + display_mode + '">'
 %>
-<%include file="header.html" args="page_js='section', title=title, header=header, meta_tags=meta_tags"/>
+<%include file="header.html" args="page_js='section', title=title, header=header, js_script=js_script"/>
 <%include file="navbar.html" args="videos=videos"/>
 <%include file="body.html" args="plex_url=plex_url, server=server, port=port, videos=videos, page_type=page_type"/>
 <%include file="footer.html"/> 

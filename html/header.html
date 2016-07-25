@@ -14,7 +14,7 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-<%page args="page_js, title, header='PlexArt', meta_tags=''"/>
+<%page args="page_js, title, header='PlexArt', js_script=''"/>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -26,9 +26,10 @@
         <script src="/static/js/lib/jquery-3.0.0.min.js"></script>
         <script src="/static/js/lib/jquery-ui/jquery-ui.js"></script>
         <script src="/static/js/lib/jqueryRotate.js"></script>
+        <script src="/static/js/lib/js.cookie.js"></script>
         <script src="/static/js/${page_js}.js"></script>
-        
-        ${meta_tags}
+                
+        ${js_script}
         
         <title>PlexArt${title}</title>
     </head>
@@ -37,3 +38,4 @@
             <div class="header_left"><a class="header_link" href="..">PlexArt</a>${header}</div>
             <div class="header_right"><a href=".."><img src="static/images/plexart.png" height="40" width="40"></a></div>
         </div>
+        <noscript>No javascript</noscript>

@@ -53,6 +53,10 @@ a:focus {
   text-decoration: underline;
 }
 
+#noscript {
+  
+}
+
 #header {
   color: #e8ab2d;
   background: #000000;
@@ -222,6 +226,10 @@ a:focus {
 
 .video_title2_tv {
   width: 300px;
+}
+
+.video_title2_list {
+  width: 95%;
 }
 
 .seasons {
@@ -400,7 +408,7 @@ input[type=text] {
   display: inline-block;
   height: 190px;
   margin: 5px;
-  width: 100%;
+  width: 99%;
 }
 
 .list_video_title {
