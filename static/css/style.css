@@ -228,6 +228,10 @@ a:focus {
   width: 300px;
 }
 
+.video_title2_list {
+  width: 95%;
+}
+
 .seasons {
   display: none; 
   background: #333333;
@@ -404,7 +408,7 @@ input[type=text] {
   display: inline-block;
   height: 190px;
   margin: 5px;
-  width: 100%;
+  width: 99%;
 }
 
 .list_video_title {
