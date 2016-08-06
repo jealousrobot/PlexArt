@@ -155,7 +155,7 @@
         ## the images for the videos in the section.
         % else:
                 <div class="${video_block_class}video_block" id="block-${video.get('ratingKey')}">
-                    <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb ${video_key}" src="${plex_url}${video.get('thumb')}" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" class="${video_key}" src="${plex_url}${video.get('art')}" width="267" height="150">
+                    <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb ${video_key}" src="${plex_url}${video.get('thumb')}" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" class="video_art ${video_key}" src="${plex_url}${video.get('art')}" width="267" height="150">
             <%
                 def process_list( list_name):
                     list_out = ''

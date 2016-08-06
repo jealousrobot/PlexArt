@@ -464,7 +464,15 @@ $(document).ready(function(){
   $("#navbar_list").click(function(){
     thumbsListToggle('list');
   });
+    
+  $(".video_thumb").dblclick(function(){
+    window.open($(this).attr('src'));
+  });
   
+  $(".video_art").dblclick(function(){
+    window.open($(this).attr('src'));
+  });
+    
   $(window).resize(function(){
     // If the window is resized, reset the widths of the 
     // seasons DIVs.
