@@ -16,13 +16,13 @@
 
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
-import urllib2
-import os
-import sys
-import string
+import urllib2, os, sys, string, urllib
+import sqlite3
 
-DB_STRING = 'plexarts.db'
-SERVER_FILE = 'servers.xml'
+import plexart
+from plexart import *
+from plexart.api import *
+from plexart.database import *
 
 # Ensure lib added to path, before any other imports
 # Thank you PlexPy for this!
@@ -33,49 +33,6 @@ import mako
 
 from mako.template import Template
 from mako.lookup import TemplateLookup
-
-class PlexArtAPI(object):
-    exposed = True  
-    
-    @cherrypy.tools.accept(media='text/plain')
-    def GET(self, server, port, rating_key):
-        playlist_out = ''
-        
-        playlistURL = 'http://' + server + ':' + port + '/playlists'
-        
-        playlistsXML = ET.ElementTree(file=urllib2.urlopen(playlistURL))
-        playlists = playlistsXML.getroot()
-        
-        for playlist in playlists:
-            playlist_title = playlist.get('title')
-            playlist_key = playlist.get('key')
-            
-            specificPlaylistURL = 'http://' + server + ':' + port + playlist_key 
-            #specificPlaylistURL = 'http://melody.local:32400/playlists/73508/items'
-            
-            playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(specificPlaylistURL))
-            playlist_items = playlist_items_xml.getroot()  
-            
-            for video in playlist_items:
-                playlist_rating_key = video.get('ratingKey')
-                playlist_gp_key = video.get('grandparentRatingKey')
-                
-                # Check if the grandparent key is populated.  If it is, 
-                # this item is an episode or song.  In that case, we use
-                # the grandparent key as that is the TV show or artist that
-                # this item belongs to.
-                if not playlist_gp_key:
-                    key_to_use = playlist_rating_key
-                else:
-                    key_to_use = playlist_gp_key
-                    
-                if key_to_use == rating_key:
-                    if playlist_out:
-                        playlist_out += ' / ' + playlist_title
-                    else:
-                        playlist_out = playlist_title
-                
-        return playlist_out
 
 class PlexArt(object):
     
@@ -100,35 +57,86 @@ class PlexArt(object):
             self.servers_XML = ET.ElementTree(self.servers)
             self.servers_XML.write(SERVER_FILE)
         
+        # Check if the data directory exists.
+        if not os.path.exists(DIR_DATA):
+            os.mkdir(DIR_DATA)
+            
+        # Setup the database.
+        db = PADatabase()
+        db.startup()
+        
+        # Check for a Plex token.  If one is not found, the user will be
+        # asked to log in to plex.tv when they first visit PlexArt.
+        self.plex_token = db.get_token()
+        
     @staticmethod
     def __set_plex_url(server_name, port):
       return 'http://' + server_name + ':' + port
       
+    def __build_url(self, server_name, port, path=""):
+      return self.__set_plex_url(server_name, port) + path + self.plex_token
+ 
     @staticmethod
     def __get_friendly_name(server_xml_root):
         friendly_name = server_xml_root.attrib['friendlyName']
         return friendly_name 
-    
+        
+    def check_token(self, server, port):
+        get_token = False
+        
+        # Refresh the token.  
+        db = PADatabase()
+        self.plex_token = db.get_token()
+        
+        # If the token is empty, then have it refreshed.
+        if self.plex_token is None or self.plex_token == "":
+            get_token = True
+        else:
+            # Token is populated, but make sure that it's still a valid token.
+            try:
+                # If server and port are both 'x', check_token is being called
+                # when PlexArt is started for the very first time.  No need to
+                # check if the token is valid against a server, since there is 
+                # no known server and the token was just fetched.
+                if server != 'x' and port != 'x':
+                    library_xml = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port), "/library"))
+            except:
+                get_token = True
+
+        # One of the validations failed.  Send the user to the sign in page to
+        # get a new token.
+        if get_token:
+            redirect_url = urllib.quote_plus(cherrypy.url(qs=cherrypy.request.query_string))
+            raise cherrypy.HTTPRedirect('sign_in?redirect=' + redirect_url)
+                    
     @cherrypy.expose
     def index(self):
         raise cherrypy.HTTPRedirect('home')
         
     @cherrypy.expose
+    def sign_in(self, redirect):
+        sign_in_template = lookup.get_template('sign_in.html')
+        return sign_in_template.render(redirect=redirect)
+        
+    @cherrypy.expose
     def home(self):
+        if self.plex_token is None or self.plex_token == "":
+            self.check_token('x', 'x')
+        
         home_template = lookup.get_template("home.html")
         return home_template.render(servers=self.servers)
         
     @cherrypy.expose
     def server(self, server='localhost', port='32400'):
-        plex_url = self.__set_plex_url(server, port) 
+        self.check_token(server, port)
         
         #Get the friendly name of the server.
-        library = ET.ElementTree(file=urllib2.urlopen(plex_url))
+        library = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port)))
         serverXML = library.getroot()
         friendly_name = self.__get_friendly_name(serverXML)
         
         #Get the list of sections.
-        library = ET.ElementTree(file=urllib2.urlopen('%s/library/sections/' % plex_url))
+        library = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port, '/library/sections')))
         
         videos = library.getroot()
         
@@ -175,11 +183,13 @@ class PlexArt(object):
             xml_file.close()
             
         server_template = lookup.get_template("server.html")
-        return server_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, videos=videos)
+        return server_template.render(server=server, port=port, friendly_name=friendly_name, videos=videos)
         
     @cherrypy.expose
     #def section(self, server='localhost', port='32400', key='1', section='<empty>', display_mode='thumbs'):
-    def section(self, server='localhost', port='32400', key='1', section='<empty>'):   
+    def section(self, server='localhost', port='32400', key='1', section='<empty>'):  
+        self.check_token(server, port)
+        
         cookieSet = cherrypy.response.cookie
         
         # Retrieve the cookie for the display mode (thumbs or list).
@@ -201,19 +211,16 @@ class PlexArt(object):
             display_mode = 'thumbs'
             cookieSet[cookie_display_mode] = display_mode
         
-        # Set the base URL for the server.
-        plex_url = self.__set_plex_url(server, port)
-        
         #Get the friendly name of the server.
-        library = ET.ElementTree(file=urllib2.urlopen(plex_url))
+        library = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port)))
         serverXML = library.getroot()
         friendly_name = self.__get_friendly_name(serverXML)
         
         # Build the URL to the XML that returns all of the videos in the section.
-        plex_xml_path = plex_url + '/library/sections/' + key + '/all'
+        section_path = '/library/sections/' + key + '/all'
         
         # Get the XML for the section
-        library = ET.ElementTree(file=urllib2.urlopen(plex_xml_path))
+        library = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port, section_path)))
         videos = library.getroot()
         
         list_dict = {}
@@ -261,7 +268,7 @@ class PlexArt(object):
             coll_dict[rating_key] = ['loading...']
                 
         # Get the list of playlists
-        playlists_XML = ET.ElementTree(file=urllib2.urlopen('%s/playlists' % plex_url))
+        playlists_XML = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port, '/playlists')))
         playlists = playlists_XML.getroot()
         
         # Loop through each playlist and get the individual items in the
@@ -271,7 +278,7 @@ class PlexArt(object):
             playlist_key = playlist.get('key')
             
             # Get the individual items that make up the playlist.
-            playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(plex_url + playlist_key))
+            playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(self.__build_url(server, port, playlist_key)))
             playlist_items = playlist_items_xml.getroot()
             
             # Loop through each item in the playlist.
@@ -313,7 +320,7 @@ class PlexArt(object):
         cookieSet['section_type'] = page_type
         
         section_template = lookup.get_template('section.html')
-        return section_template.render(server=server, port=port, plex_url=plex_url, friendly_name=friendly_name, page_type=page_type, section=section, videos=videos, display_mode=display_mode, lists=list_dict)
+        return section_template.render(server=server, port=port, friendly_name=friendly_name, page_type=page_type, section=section, videos=videos, display_mode=display_mode, lists=list_dict)
     
 
 # Configure CherryPy so that the webserver is visible on the LAN, not just the
@@ -325,6 +332,7 @@ cherrypy.config.update({'server.socket_host': '0.0.0.0',
 lookup = TemplateLookup(directories=['html'])
 
 if __name__ == '__main__':
+    
     conf = {
          '/': {
              'tools.sessions.on': True,
@@ -335,12 +343,30 @@ if __name__ == '__main__':
              'tools.response_headers.on': True,
              'tools.response_headers.headers': [('Content-Type', 'text/plain')],
          },
+         '/image': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+         },
+         '/metadata': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+         },
+        '/token': {
+             'request.dispatch': cherrypy.dispatch.MethodDispatcher(),
+             'tools.response_headers.on': True,
+             'tools.response_headers.headers': [('Content-Type', 'text/plain')],
+         },
          '/static': {
              'tools.staticdir.on': True,
              'tools.staticdir.dir': './static'
          },
     }
     webapp = PlexArt()
-    webapp.playlist = PlexArtAPI() 
+    webapp.playlist = GetPlaylists()
+    webapp.image = GetImage()
+    webapp.metadata = GetMetaData()
+    webapp.token = GetPlexToken()
     #cherrypy.quickstart(PlexArt(), '/', conf)
     cherrypy.quickstart(webapp, '/', conf)

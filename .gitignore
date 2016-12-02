@@ -1,3 +1,13 @@
 
 *.pyc
 servers.xml
+
+.DS_Store
+
+test.py
+
+plexart.db
+
+servers.xml
+
+servers.xml
