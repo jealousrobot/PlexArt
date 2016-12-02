@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License       
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.   
 
+function buildMetaDataURL(server, port, path) {
+    return '/metadata?server=' + server + '&port=' + port + '&path=' + path
+  }
+
 function validateForm() {
   
   var serverName = document.forms['getServer']['serverName'].value;
@@ -43,7 +47,7 @@ function validateForm() {
   $.ajax({
       type: 'GET',
       dataType: 'xml',
-      url: plexURL,
+      url: buildMetaDataURL(serverName, serverPort, '/library/'),
       async: false,
       error: errorResponse,
       success: successResponse

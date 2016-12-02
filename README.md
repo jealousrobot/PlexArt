@@ -1,5 +1,5 @@
 # PlexArt
-PlexArt is a Python web app for getting a better view of the artwork used in Plex.  It will show you thumbnails of the posters and background for your all of the items in a section.
+PlexArt is a Python web app for getting a better view of the artwork used in Plex.  It will show you thumbnails of the posters and background for all of the items in a section.
 
 ## Background
 Do you like it when all of the posters for your Star Wars movies match, or all of the seasons for your Simpsons collection are in the same style, or the background for all of the Star Trek TV shows share a theme?  Me too!  Only problem, with Plex you have to go into each movie/show to see what's set and to see what's available.  Then there's a bunch of clicking ot get the artwork changed.  I wanted a way to be able to see the posters and background artwork for all items in a section, and thus PlexArt was born.
@@ -59,3 +59,10 @@ PlexArt uses the following 3rd party packages/scripts:
 * [jQuery Rotate](http://jqueryrotate.com/)
 
 See their websites for the licenses involved with them.
+
+## Change Log
+### 1.2 Now with Plex.tv token support
+#### New Features
+None
+#### Bug Fixes
+1. Added support for using plex.tv tokens.  Tokens were made mandatory by Plex for accessing a server in PMS version 1.0+.
