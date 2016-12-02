@@ -15,7 +15,6 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Page Variables:
-## plex_url - The URL of the Plex server in the format http://<server_name>:<port>
 ## server - The name of the Plex server
 ## port - The port of the Plex server
 ## videos - The XML containing either all of the items in the section or all of 
@@ -27,7 +26,7 @@
 ##   artist - A music section is being displayed
 ## display_mode - Determines if the page loads with thumbnails or in a list.
 
-<%page args="plex_url, server, port, videos='', page_type='movie'"/>
+<%page args="server, port, videos='', page_type='movie'"/>
         <div id="results_container">
             <div id="results">
 <% 
@@ -148,14 +147,14 @@
         ## different sections.
         % if page_type == 'server':
                 <div class="item_block">
-                    <div class="item_image" id="image-${video.get('key')}"><a class="item_link" href="../section?server=${server}&port=${port}&key=${video.get('key')}&section=${video_title}"><img src="${plex_url}${video.get('art')}" width="267" height="150"></a></div>
+                    <div class="item_image" id="image-${video.get('key')}"><a class="item_link" href="../section?server=${server}&port=${port}&key=${video.get('key')}&section=${video_title}"><img src="/image?server=${server}&port=${port}&path=${video.get('art')}&type=background" width="267" height="150"></a></div>
                     <div class="item_title" id="title-${video.get('key')}"><a class="item_link" href="../section?server=${server}&port=${port}&key=${video.get('key')}&section=${video_title}">${video_title}</a></div>
                 </div>
         ## For all other page_type values, this is a section in Plex.  Output 
         ## the images for the videos in the section.
         % else:
                 <div class="${video_block_class}video_block" id="block-${video.get('ratingKey')}">
-                    <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb ${video_key}" src="${plex_url}${video.get('thumb')}" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" class="video_art ${video_key}" src="${plex_url}${video.get('art')}" width="267" height="150">
+                    <div class="video_img" id="image-${video.get('ratingKey')}"><img id="thumb-${video.get('ratingKey')}" class="video_thumb ${video_key}" src="/image?server=${server}&port=${port}&path=${video.get('thumb')}&type=thumb" width="100" height="${image_height}"><img id="art-${video.get('ratingKey')}" class="video_art ${video_key}" src="/image?server=${server}&port=${port}&path=${video.get('art')}&type=background" width="267" height="150">
             <%
                 def process_list( list_name):
                     list_out = ''
