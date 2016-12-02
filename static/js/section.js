@@ -30,10 +30,8 @@ $(document).ready(function(){
     return cookieDisplayMode;
   }
   
-  function getPlexURL() {
-    var plexURL = gPlexURL;
-    
-    return plexURL;
+  function buildMetaDataURL(path) {
+    return '/metadata?server=' + gServer + '&port=' + gPort + '&path=' + path
   }
   
   function thumbsListToggle(displayMode) {
@@ -211,8 +209,6 @@ $(document).ready(function(){
       
     var metaSetValue;
     
-    var plex_url = getPlexURL();
-    
     // Get the content of the meta tag metaSlider, which contains the 
     // currently open season block.
     var slider = gDrawerID;
@@ -234,7 +230,7 @@ $(document).ready(function(){
     $.ajax({
       type: 'GET',
       dataType: 'xml',
-      url: plex_url + '/library/metadata/' + elementID + '/children',
+      url: buildMetaDataURL('/library/metadata/' + elementID + '/children'),
       success: parseSeasonXML
     });
     
@@ -247,7 +243,7 @@ $(document).ready(function(){
         if ($(this).attr('parentRatingKey') == elementID) {
           result += '<div class="' + div_name + '">';
           result += '    <div class="season">';
-          result += '        <div class="season_img"><img id="seasonImage-' + $(this).attr('ratingKey') + '" class="' + elementID + '" src="' + plex_url + $(this).attr('thumb') + '" width="100" height="' + img_height + '"></div>';
+          result += '        <div class="season_img"><img id="seasonImage-' + $(this).attr('ratingKey') + '" class="' + elementID + '" src="/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + '&type=thumb' + '" width="100" height="' + img_height + '"></div>';
           result += '        <div class="season_title">' + $(this).attr('title') + '</div>';
           result += '    </div>';
           result += '</div>';
@@ -274,7 +270,6 @@ $(document).ready(function(){
   }
      
   function refreshVideo(elementName) {
-    var plexURL = getPlexURL();
     var sectionType = gSectionType;
     var displayMode = Cookies.get(getDisplayModeCookie());
     
@@ -326,7 +321,7 @@ $(document).ready(function(){
       $.ajax({
         type: 'GET',
         dataType: 'xml',
-        url: plexURL + '/library/metadata/' + elementID,
+        url: buildMetaDataURL('/library/metadata/' + elementID),
         success: reloadImage
       });
       
@@ -355,8 +350,8 @@ $(document).ready(function(){
         // Build the URL for the image.
         $(xml).find(sectionElement).each(function()
         {
-          thumb = plexURL + $(this).attr('thumb');
-          art = plexURL + $(this).attr('art');
+          thumb = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + '&type=thumb';
+          art = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('art') + '&type=background';
           
           if (displayMode == 'list') {
             $(xml).find('Genre').each(function() {
@@ -381,7 +376,7 @@ $(document).ready(function(){
           $.ajax({
             type: 'GET',
             dataType: 'xml',
-            url: plexURL + '/library/metadata/' + elementID + '/children',
+            url: buildMetaDataURL('/library/metadata/' + elementID + '/children'),
             success: parseSeasonXML
           });
           
@@ -394,7 +389,7 @@ $(document).ready(function(){
               // Skip the first record as it not a season/album.
               if ($(this).attr('parentRatingKey') == elementID) {
                 seasonImageID = '#seasonImage-' + $(this).attr('ratingKey');
-                seasonImagePath = plexURL + $(this).attr('thumb') + 'x';
+                seasonImagePath = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + 'x' + '&type=thumb';
                 $(seasonImageID).attr("src", seasonImagePath);
               }
             });
@@ -500,8 +495,6 @@ $(document).ready(function(){
   
   // Get all of the list detail elements.
   var listDetails = document.getElementsByClassName('list_details'); 
-   
-  var plexURL = getPlexURL();
        
   // Loop through the list detail elements.
   for (i=0; i<listDetails.length; i++) {  
@@ -512,7 +505,7 @@ $(document).ready(function(){
     $.ajax({
       type: 'GET',
       dataType: 'xml',
-      url: plexURL + '/library/metadata/' + elementID,
+      url: '/metadata?server=' + gServer + '&port=' + gPort + '&path=/library/metadata/' + elementID,
       success: parseXML
     });
      

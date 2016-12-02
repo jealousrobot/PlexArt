@@ -41,18 +41,16 @@ Input variables to the page:
     js_script += '  var gServer = "' + server + '";'
     js_script += '  var gPort = "' + port + '";'
     js_script += '  var gSectionType = "' + page_type + '";'
-    js_script += '  var gPlexURL = "' + plex_url + '";'
     js_script += '</script>'
     
     meta_tags = '<meta name="slider" id="metaSlider" content="">'
     meta_tags += '<meta name="cols" id="metaCols" content="">'
     meta_tags += '<meta name="server" id="metaServer" content="' + server + '">'
     meta_tags += '<meta name="port" id="metaPort" content="' + port + '">'
-    meta_tags += '<meta name="plex_url" id="metaPlexUrl" content="' + plex_url + '">'
     meta_tags += '<meta name="section_type" id="metaSectionType" content="' + page_type + '">'
     meta_tags += '<meta name="display_mode" id="metaDisplayMode" content="' + display_mode + '">'
 %>
 <%include file="header.html" args="page_js='section', title=title, header=header, js_script=js_script"/>
 <%include file="navbar.html" args="videos=videos"/>
-<%include file="body.html" args="plex_url=plex_url, server=server, port=port, videos=videos, page_type=page_type"/>
+<%include file="body.html" args="server=server, port=port, videos=videos, page_type=page_type"/>
 <%include file="footer.html"/> 
