@@ -61,6 +61,12 @@ PlexArt uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 1.2.1 Now with masked passwords
+#### New Features
+None
+#### Bug Fixes
+1. Changed the password input box to a masked input box.  It was inadvertantly left as a regular text which was used during testing as to make sure passwords were entered correctly to avoid validation failures.
+
 ### 1.2 Now with Plex.tv token support
 #### New Features
 None
