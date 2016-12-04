@@ -1,5 +1,5 @@
-/* PlexArt - View all of the artwork for Plex sections at once           
-   Copyright (C) 2016  Jason Ellis                                       
+/* Uffizi - View all of the artwork for Plex sections at once           
+   Copyright (C) 2016 Jason Ellis                                       
                                                                          
    This program is free software: you can redistribute it and/or modify  
    it under the terms of the GNU General Public License as published by  
@@ -54,7 +54,7 @@ a:focus {
 }
 
 #header {
-  color: #e8ab2d;
+  color: #1E949A;
   background: #000000;
   top: 0;
   right: 0;
@@ -66,7 +66,7 @@ a:focus {
 
 .header_link:link,
 .header_link:visited {
-  color: #e8ab2d;
+  color: #1E949A;
 }
 
 .header_left {
@@ -310,7 +310,7 @@ a:focus {
 input[type=submit],
 input[type=button] {
   width: 100%;
-  background-color: #e8ab2d;
+  background-color: #1E949A;
   border: none;
   color: #ffffff;
   text-decoration: none;
@@ -371,7 +371,7 @@ input[type=password] {
 
 .prior_server:hover,
 .prior_server:focus {
-  background: #e8ab2d;
+  background: #1E949A;
 }
 
 .prior_title {
