@@ -1,5 +1,5 @@
-# PlexArt - View all of the artwork for Plex sections at once
-# Copyright (C) 2016  Jason Ellis
+# Uffizi - View all of the artwork for Plex sections at once
+# Copyright (C) 2016 Jason Ellis
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 import sqlite3
 import os
 
-import plexart
-from plexart import *
+import uffizi
+from uffizi import *
 
-class PADatabase(object):
+class Database(object):
     def __init__(self):
         self.conn = sqlite3.connect(DIR_DATA + '/' + DB_STRING)
     

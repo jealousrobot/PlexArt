@@ -35,23 +35,23 @@ We are interested in in the server name/addres and the port number.  The server 
 
 The port is the numerical value that appears after the colon.  In all four examples above that would be 32400, which is the default port for Plex.
 
-Now that we have these two values, enter them in the appropriate fields on the webpage for PlexArt and press the Submit button.  Once a server is successfully connected to it will appear in a list below the Submit button so you won't need to do it again.
+Now that we have these two values, enter them in the appropriate fields on the webpage for Uffizi and press the Submit button.  Once a server is successfully connected to it will appear in a list below the Submit button so you won't need to do it again.
 
 You will now be taken to the sections that are available on the server.  Photo sections are not displayed as they do not have any artwork associated with them.  Pick the one you'd like to view.
 
 The next page will show you thumbnails of the posters and background artwork for all items in that section.  Using the refresh button on the lower right of each item will refresh the artwork for the item.  This is useful for when you update the artwork using the Plex Media Manager.  If the item is a TV show or a music artist a down arrow icon will also appear next to the refresh icon.  Pressing this icon will expand a tray showing the season or album artwork for the item.
 
 ## Acknowledgement
-This project would not be possible without [PlexPy](https://github.com/drzoidberg33/plexpy).  Having that for a reference was invaluable in creating PlexArt
+This project would not be possible without [PlexPy](https://github.com/drzoidberg33/plexpy).  Having that for a reference was invaluable in creating Uffizi
 
 ## License
-PlexArt is licensed under GPL v3.0.
+Uffizi is licensed under GPL v3.0.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-PlexArt uses the following 3rd party packages/scripts:
+Uffizi uses the following 3rd party packages/scripts:
 * [CherryPy](http://www.cherrypy.org/)
 * [Mako Templates for Python](http://www.makotemplates.org/)
 * [jQuery](https://jquery.com/)
@@ -61,6 +61,12 @@ PlexArt uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 1.3.0 Now with more Uffizi and less PlexArt
+#### New Features
+1. Turns out third-party apps can't contain the word "Plex".  PlexArt is now Uffizi.
+#### Bug Fixes
+None
+
 ### 1.2.1 Now with masked passwords
 #### New Features
 None

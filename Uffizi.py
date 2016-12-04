@@ -1,4 +1,4 @@
-# PlexArt - View all of the artwork for Plex sections at once
+# Uffizi - View all of the artwork for Plex sections at once
 # Copyright (C) 2016  Jason Ellis
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@ import xml.dom.minidom as minidom
 import urllib2, os, sys, string, urllib
 import sqlite3
 
-import plexart
-from plexart import *
-from plexart.api import *
-from plexart.database import *
+import uffizi
+from uffizi import *
+from uffizi.api import *
+from uffizi.database import *
 
 # Ensure lib added to path, before any other imports
 # Thank you PlexPy for this!
@@ -34,7 +34,7 @@ import mako
 from mako.template import Template
 from mako.lookup import TemplateLookup
 
-class PlexArt(object):
+class Uffizi(object):
     
     def __init__(self):
         
@@ -62,11 +62,11 @@ class PlexArt(object):
             os.mkdir(DIR_DATA)
             
         # Setup the database.
-        db = PADatabase()
+        db = Database()
         db.startup()
         
         # Check for a Plex token.  If one is not found, the user will be
-        # asked to log in to plex.tv when they first visit PlexArt.
+        # asked to log in to plex.tv when they first visit Uffizi.
         self.plex_token = db.get_token()
         
     @staticmethod
@@ -85,7 +85,7 @@ class PlexArt(object):
         get_token = False
         
         # Refresh the token.  
-        db = PADatabase()
+        db = Database()
         self.plex_token = db.get_token()
         
         # If the token is empty, then have it refreshed.
@@ -95,7 +95,7 @@ class PlexArt(object):
             # Token is populated, but make sure that it's still a valid token.
             try:
                 # If server and port are both 'x', check_token is being called
-                # when PlexArt is started for the very first time.  No need to
+                # when Uffizi is started for the very first time.  No need to
                 # check if the token is valid against a server, since there is 
                 # no known server and the token was just fetched.
                 if server != 'x' and port != 'x':
@@ -146,7 +146,7 @@ class PlexArt(object):
             # instance[0] accesses the server tag and [1] the port tag.
             if server == instance[0].text and port == instance[1].text:
                 # Check if the friendly name of the server has been updated
-                # since the last time the server was visited by PlexArt.  If so
+                # since the last time the server was visited by Uffizi.  If so
                 # update the XML with the new value.
                 if friendly_name != instance[2].text:
                     instance[2].text = friendly_name
@@ -363,10 +363,10 @@ if __name__ == '__main__':
              'tools.staticdir.dir': './static'
          },
     }
-    webapp = PlexArt()
+    webapp = Uffizi()
     webapp.playlist = GetPlaylists()
     webapp.image = GetImage()
     webapp.metadata = GetMetaData()
     webapp.token = GetPlexToken()
-    #cherrypy.quickstart(PlexArt(), '/', conf)
+    
     cherrypy.quickstart(webapp, '/', conf)

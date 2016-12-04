@@ -1,5 +1,5 @@
-# PlexArt - View all of the artwork for Plex sections at once
-# Copyright (C) 2016  Jason Ellis
+# Uffizi - View all of the artwork for Plex sections at once
+# Copyright (C) 2016 Jason Ellis
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 DIR_DATA = 'data'
-DB_STRING = 'plexart.db'
+DB_STRING = 'uffizi.db'
 SERVER_FILE = 'servers.xml'
-PLEXART_VERSION = '1.2.0'
+UFFIZI_VERSION = '1.3.0'
