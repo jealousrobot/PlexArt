@@ -1,5 +1,5 @@
-// PlexArt - View all of the artwork for Plex sections at once          
-// Copyright (C) 2016  Jason Ellis                                      
+// Uffizi - View all of the artwork for Plex sections at once          
+// Copyright (C) 2016 Jason Ellis                                      
 //                                                                      
 // This program is free software: you can redistribute it and/or modify 
 // it under the terms of the GNU General Public License as published by 

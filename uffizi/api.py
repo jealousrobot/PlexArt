@@ -1,5 +1,5 @@
-# PlexArt - View all of the artwork for Plex sections at once
-# Copyright (C) 2016  Jason Ellis
+# Uffizi - View all of the artwork for Plex sections at once
+# Copyright (C) 2016 Jason Ellis
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,16 +20,16 @@ import base64, httplib
 from httplib import HTTPConnection
 import uuid
 import cherrypy
-import plexart
-from plexart import *
-from plexart.database import *
+import uffizi
+from uffizi import *
+from uffizi.database import *
 
 class GetPlaylists(object):
     exposed = True  
     
     @cherrypy.tools.accept(media='text/plain')
     def GET(self, server, port, rating_key):
-        db = PADatabase()
+        db = Database()
         plex_token = db.get_token()
         
         playlist_out = ''
@@ -44,7 +44,6 @@ class GetPlaylists(object):
             playlist_key = playlist.get('key')
             
             specificPlaylistURL = 'http://' + server + ':' + port + playlist_key + plex_token
-            #specificPlaylistURL = 'http://melody.local:32400/playlists/73508/items'
             
             playlist_items_xml = ET.ElementTree(file=urllib2.urlopen(specificPlaylistURL))
             playlist_items = playlist_items_xml.getroot()  
@@ -75,7 +74,7 @@ class GetImage(object):
     
     @cherrypy.tools.accept(media='text/plain')
     def GET(self, server, port, path, type):
-        db = PADatabase()
+        db = Database()
         plex_token = db.get_token()
         
         print 'Token : ', plex_token
@@ -92,7 +91,7 @@ class GetImage(object):
             else:
                 imageName = 'emptyMusicThumb'
                 
-            image = urllib2.urlopen('http://localhost:3700/static/images/' + imageName + '.jpg')
+            image = urllib2.urlopen('http://localhost:3700/static/images/' + imageName + '.png')
         
         return image
 
@@ -101,7 +100,7 @@ class GetMetaData(object):
         
     @cherrypy.tools.accept(media='text/plain')
     def GET(self, server, port, path):
-        db = PADatabase()
+        db = Database()
         plex_token = db.get_token()
         
         url = 'http://' + server + ':' + port + path + plex_token
@@ -124,9 +123,9 @@ class GetPlexToken(object):
         headers={'Content-Type': 'application/xml; charset=utf-8',
                  'Authorization': "Basic %s" % base64string,
                  'X-Plex-Client-Identifier': client_id,
-                 'X-Plex-Product': "PlexArt",
-                 'X-Plex-Version': PLEXART_VERSION,
-                 'X-Plex-Device-Name': 'PlexArt'
+                 'X-Plex-Product': "Uffizi",
+                 'X-Plex-Version': UFFIZI_VERSION,
+                 'X-Plex-Device-Name': 'Uffizi'
                  }
                  
         found = "worked"
@@ -144,7 +143,7 @@ class GetPlexToken(object):
         plex_token = usr_xml.get('authenticationToken')
         found = 'Token retrieved : ' + plex_token
         
-        db = PADatabase()
+        db = Database()
         db.save_token(plex_token)
 
         conn.close()
