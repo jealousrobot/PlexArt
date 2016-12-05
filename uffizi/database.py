@@ -46,14 +46,14 @@ class Database(object):
 	              "  PRIMARY KEY(`SERVER`, `PORT`));"
             sql_result = self.execute(sql, False)
         
-    def get_token(self):
+    def get_stored_token(self):
         sql = "SELECT TOKEN FROM TOKEN"
         sql_result = self.execute(sql, False)
         
         if sql_result is None or sql_result[0] == "":
             return ""
         else:
-            return '?X-Plex-Token=' + sql_result[0]
+            return sql_result[0]
             
     def save_token(self, token):
         # Clear any existing token values (there should only be one).
@@ -74,4 +74,10 @@ class Database(object):
             return sql_result.fetchall()
         else:
             return sql_result.fetchone()
+            
+    def commit(self):
+        self.conn.commit()
+            
+    def close(self):
+        self.conn.close()
         
