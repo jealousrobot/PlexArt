@@ -61,6 +61,14 @@ Uffizi uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 1.3.1 Now with less now since I'm tired of coming up with nows
+#### New Features
+1. Addition of plexserver.py file which consolidates methods for accessing data from a Plex server to one place.
+2. Added commit and close method to database.py.
+3. Some code tidying up.
+#### Bug Fixes
+None
+
 ### 1.3.0 Now with more Uffizi and less PlexArt
 #### New Features
 1. Turns out third-party apps can't contain the word "Plex".  PlexArt is now Uffizi.
