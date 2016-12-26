@@ -19,12 +19,6 @@ import xml.dom.minidom as minidom
 import urllib2, os, sys, string, urllib
 import sqlite3
 
-import uffizi
-from uffizi import *
-from uffizi.api import *
-from uffizi.database import *
-from uffizi.plexserver import *
-
 # Ensure lib added to path, before any other imports
 # Thank you PlexPy for this!
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "lib/"))
@@ -34,6 +28,12 @@ import mako
 
 from mako.template import Template
 from mako.lookup import TemplateLookup
+
+import uffizi
+from uffizi import *
+from uffizi.api import *
+from uffizi.database import *
+from uffizi.plexserver import *
 
 class Uffizi(object):
     
