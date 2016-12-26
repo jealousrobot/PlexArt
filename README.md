@@ -61,7 +61,13 @@ Uffizi uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
-### 1.3.1 Now with less now since I'm tired of coming up with nows
+### 0.1.3.2 Module Load Order Fix
+#### New Features
+None
+#### Bug Fixes
+1. 37 - Fixed issue that was cuasing Uffizi to not load on any machine except the dev machine.  This was due to the order in which modules were imported.
+
+### 0.1.3.1 Now with less now since I'm tired of coming up with nows
 #### New Features
 1. Addition of plexserver.py file which consolidates methods for accessing data from a Plex server to one place.
 2. Added commit and close method to database.py.
@@ -69,19 +75,19 @@ See their websites for the licenses involved with them.
 #### Bug Fixes
 None
 
-### 1.3.0 Now with more Uffizi and less PlexArt
+### 0.1.3.0 Now with more Uffizi and less PlexArt
 #### New Features
 1. Turns out third-party apps can't contain the word "Plex".  PlexArt is now Uffizi.
 #### Bug Fixes
 None
 
-### 1.2.1 Now with masked passwords
+### 0.1.2.1 Now with masked passwords
 #### New Features
 None
 #### Bug Fixes
 1. Changed the password input box to a masked input box.  It was inadvertantly left as a regular text which was used during testing as to make sure passwords were entered correctly to avoid validation failures.
 
-### 1.2 Now with Plex.tv token support
+### 0.1.2 Now with Plex.tv token support
 #### New Features
 None
 #### Bug Fixes

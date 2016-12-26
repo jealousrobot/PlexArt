@@ -17,6 +17,6 @@
 DIR_DATA = 'data'
 DB_STRING = 'uffizi.db'
 SERVER_FILE = 'servers.xml'
-UFFIZI_VERSION = '1.3.1'
+UFFIZI_VERSION = '0.1.3.2'
 
 PLEX_TOKEN_PARM = 'X-Plex-Token='
