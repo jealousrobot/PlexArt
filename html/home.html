@@ -15,42 +15,74 @@
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
 <%include file="header.html" args="page_js='home', title='', header=''"/>
-<%include file="navbar.html" args="videos=''"/>
+<%include file="navbar.html" args="videos='', page_type='home'"/>
 
-        <div id="results_container">
+        <div id="results_container"> 
             <div id="results">
-                <div class="form_server">
-            	    <form name="getServer" action="" onsubmit="return validateForm()" method="get">
-                        <div class="server_inputs" id="serverInputs">
-                            <div id="serverNameDiv" onKeyPress="return checkSubmit(event)">Server<br><input type="text" name="server" id="serverName" autofocus></div><br>
-                            <div id="serverPortDiv" onKeyPress="return checkSubmit(event)">Port<br><input type="text" name="port" id="serverPort"></div><br>
+
+                % for server in servers:
+                    % if loop.first:
+                    <div class="servers">
+                        <div class="prior_servers">
+                            <div class="prior_title">Plex Servers</div>
+                    % endif
+                        
+                        <div class="item_block" id="${server[0]}">
+                            <div class="item_image" id="image-${server[0]}"><img src="static/images/os/${server[1]}.png" width="267" height="150"></div>
+                            <div class="item_title" id="title-${server[0]}"><div class="item_title2" id="title2-${server[0]}">${server[0]}</div><div class="server_status"><img id="edit-${server[0]}" src="static/images/edit.png" class="edit_icon" width="20" height="20" onclick="return showEditServer('${server[0]}')"><img id="status-${server[0]}" class="server_icon" src="static/images/question.png" width="20" height="20" alt="Server Status"></div></div>
                         </div>
-                        <div class="form_button">
-                            <input type="button" value="Submit" onclick="return validateForm()">
+                        
+                    % if loop.last:
                         </div>
-                    </form>
-                </div>
-    
-                <div class="form_error" id="serverError">
-                    <div class="ui-widget">
-                        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-    		                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-    		                <strong>Alert:</strong> <span id="errorText"></span></p>
-    	                </div>
-    	            </div>
-                </div>
-            
-            % for server in servers:
-                % if loop.first:
-                <div class="prior_servers">
-                    <div class="prior_title">Existing Servers</div>
-                % endif
-                    <div><a class="prior_server" href="server?server=${server[0].text}&port=${server[1].text}">${server[2].text}</a></div>
-                % if loop.last:
-                </div> 
-                % endif
-            % endfor
+                    </div> 
+                    % endif
+                % endfor
             </div>
         </div>
+        
+<%include file="progressbar.html" args="title='Refreshing servers from plext.tv'"/>
+
+<%
+    add_header = "<div class=\"edit_server\">Add Server</div>"
+    
+    add_body = "<form name=\"getServer\" action=\"\" onsubmit=\"return validateForm()\" method=\"get\">" \
+               "    <div class=\"form_inputs\" id=\"serverInputs\">" \
+               "         <div id=\"serverNameDiv\" onKeyPress=\"return checkSubmit(event)\">Server<br><input type=\"text\" name=\"server\" id=\"serverName\" autofocus></div><br>" \
+               "         <div id=\"serverPortDiv\" onKeyPress=\"return checkSubmit(event)\">Port<br><input type=\"text\" name=\"port\" id=\"serverPort\"></div><br>" \
+               "     </div>" \
+               "     <div class=\"form_error\" id=\"serverError\">" \
+               "         <div class=\"ui-widget\">" \
+               "             <div class=\"ui-state-error ui-corner-all\" style=\"padding: 0 .7em;\">" \
+        	   "                 <p><span class=\"ui-icon ui-icon-alert\" style=\"float: left; margin-right: .3em;\"></span>" \
+        	   "                    <strong>Alert:</strong> <span id=\"errorText\"></span></p>" \
+        	   "             </div>" \
+    	       "         </div>" \
+               "     </div>"
+                 
+    add_footer = "    <div class=\"form_button\">" \
+                 "        <input type=\"button\" value=\"Cancel\" class=\"modal_cancel\" style=\"background-color:#000000;\" id=\"add_modal-Cancel\">" \
+                 "        <input type=\"button\" value=\"Submit\" onclick=\"return validateForm()\">" \
+                 "    </div>" \
+                 "</form>"
+%>
+<%include file="modal_form.html" args="modal_id='add_modal', title=add_header, body=add_body, footer=add_footer"/>
+
+<%
+    edit_header = "<div class=\"edit_server\" id=\"xserverName\"></div>" \
+                  "<div class=\"edit_platform\" id=\"xplatformName\"></div>"
+                  
+    edit_body = "<form name=\"editServer\" action=\"\" onsubmit=\"return saveEditServer()\" method=\"get\">" \
+                "    <div class=\"form_inputs\" id=\"editServerInputs\">"\
+                "    </div>"
+                
+    edit_footer = "    <div class=\"form_button\">" \
+                  "        <input type=\"button\" value=\"Cancel\" class=\"modal_cancel\" style=\"background-color:#000000;\" id=\"edit_modal-Cancel\">" \
+                  "        <input type=\"button\" value=\"Submit\" onclick=\"return saveServerEdit()\">" \
+                  "    </div>" \
+                  "</form>"
+%>
+
+<%include file="modal_form.html" args="modal_id='edit_modal', title=edit_header, body=edit_body, footer=edit_footer"/>
+
 <%include file="footer.html" />
 

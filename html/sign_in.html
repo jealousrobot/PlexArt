@@ -18,7 +18,8 @@
 <%include file="navbar.html" args="videos=''"/>
 <div id="results_container">
             <div id="results">
-                <div class="form_server">
+            <p>${reason}<p>
+                <div class="form_container">
             	    <form name="signIn" action="" onsubmit="return validateForm()" method="get">
                         <div class="server_inputs" id="serverInputs">
                             <div id="serverNameDiv" onKeyPress="return checkSubmit(event)">Plex.tv Username<br><input type="text" name="username" id="plex_username" autofocus></div><br>
@@ -39,7 +40,7 @@
     	            </div>
                 </div>
                 
-                <div class="form_server">
+                <div class="form_container">
                     <p>Uffizi does not store you username and password.  It is only needed in order to get a token from plex.tv which is required for Uffizi to access your server.</p>
                 </div>
             </div>

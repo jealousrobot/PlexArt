@@ -14,9 +14,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-DIR_DATA = 'data'
-DB_STRING = 'uffizi.db'
-SERVER_FILE = 'servers.xml'
-UFFIZI_VERSION = '0.1.3.2'
+# Constants
+DIR_DATA = "data"
+DB_STRING = "uffizi.db"
+SERVER_FILE = "servers.xml"
+UFFIZI_VERSION = "0.2.0"
+PLEX_TOKEN_PARM = "X-Plex-Token="
 
-PLEX_TOKEN_PARM = 'X-Plex-Token='
+# Messages
+MSG_TXT = {"ERR_MISSING_DB":"Cannot find database file.  Restart Uffizi "
+               "from the command line."
+          ,"SERVER_UNREACHABLE":"Cannot reach the requested server.  Check "
+               "to make sure the server is online."
+          ,"EXPIRED_TOKEN":"It appears as if the plex.tv token Uffizi was "
+               "using has expired.  Please sign in again in order  to get a "
+               "new token."
+          ,"PLEX_TV_UNREACHABLE":"Cannot reach plex.tv.  Try adding the "
+               "server manually."
+          ,"SERVER_INVALID":"Server '{0}' does not exist in Uffizi."}
+                                 
+# Globals
+arg_debug = False
+arg_nolaunch = False
+
+plex_token = ''
+
+def debugp(key, value=""):
+    if arg_debug:
+        print '***** {0} : {1}'.format(key, value)
+        
+def nvl(val, when_null):
+    return val or when_null

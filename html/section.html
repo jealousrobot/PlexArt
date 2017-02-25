@@ -17,11 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Input variables to the page:
   server - The name of the server
-  port - The port of the Plex server
-  plex_url - The URL of the Plex server in the format 
-    http://<server_name>:<port>
-  friendly_name - The friendly name of the server.  This is what's shown in 
-    drop down boxes and lists in Plex.
   page_type - What section is being rendered.  Valid values are music, artist, 
     and show.
   section - The name of the section
@@ -29,28 +24,26 @@ Input variables to the page:
     sections on the server.  Depends on the page_type.   
   display_mode - Whether the videos should be displayed in a series of thumbs
     or as a list with additional details. 
-  lists - A dictionary three dictionaries.  This dictionaries in turn hav a 
+  lists - A dictionary of three dictionaries.  This dictionaries in turn have a 
     list of the genres, collections, and playlists that videos belong to.  
 </%doc>
 <%
-    title = ' : ' + friendly_name + ' : ' + section
-    header = ' : <a class="header_link" href="server?server=' + server + '&port=' + port + '">' + friendly_name + '</a> : ' + section
+    title = ' : ' + server + ' : ' + section
+    header = ' : <a class="header_link" href="server?server=' + server + '">' + server + '</a> : ' + section
     
     js_script = '<script>'
     js_script += '  var gDrawerID = "";'
     js_script += '  var gServer = "' + server + '";'
-    js_script += '  var gPort = "' + port + '";'
     js_script += '  var gSectionType = "' + page_type + '";'
     js_script += '</script>'
     
     meta_tags = '<meta name="slider" id="metaSlider" content="">'
     meta_tags += '<meta name="cols" id="metaCols" content="">'
     meta_tags += '<meta name="server" id="metaServer" content="' + server + '">'
-    meta_tags += '<meta name="port" id="metaPort" content="' + port + '">'
     meta_tags += '<meta name="section_type" id="metaSectionType" content="' + page_type + '">'
     meta_tags += '<meta name="display_mode" id="metaDisplayMode" content="' + display_mode + '">'
 %>
 <%include file="header.html" args="page_js='section', title=title, header=header, js_script=js_script"/>
-<%include file="navbar.html" args="videos=videos"/>
-<%include file="body.html" args="server=server, port=port, videos=videos, page_type=page_type"/>
+<%include file="navbar.html" args="videos=videos, page_type=page_type"/>
+<%include file="body.html" args="server=server, videos=videos, page_type=page_type"/>
 <%include file="footer.html"/> 

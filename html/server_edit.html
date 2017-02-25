@@ -1,0 +1,52 @@
+## Uffizi - View all of the artwork for Plex sections at once
+## Copyright (C) 2016 Jason Ellis
+##
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+<%include file="header.html" args="page_js='server_edit', title=': Edit ' + ps.server, header=' : Edit ' + ps.server"/>
+<%include file="navbar.html" args="videos=''"/>
+
+        <div id="results_container">
+            <div class="form_server">
+            	    <form name="getServer" action="" onsubmit="return validateForm()" method="get">
+                        <div class="server_inputs" id="serverInputs">
+                            <div class="edit_server">${ps.server}</div>
+                            <div class="edit_platform">${ps.platform}</div>
+                            <hr>
+                            <div id="altNameDiv" onKeyPress="return checkSubmit(event)">Alternate Name<br><input type="text" id="alt_name" autofocus value="${ps.alt_name}"></div><br>
+                            
+                            <% row_count = 0 %>
+                            % for connection in ps.connections:
+                                <% row_count += 1 %>
+                                <div id="address${row_count}Div"><input type="text" id="address${row_count}" value="${connection[0]}"></div><div id="port${row_count}Div"><input type="text" id="port${row_count}" value="${connection[1]}"></div>
+                            % endfor
+                        </div>
+                        <div class="form_button">
+                            <input type="button" value="Submit" onclick="return validateForm()">
+                        </div>
+                    </form>
+                </div>
+    
+                <div class="form_error" id="serverError">
+                    <div class="ui-widget">
+                        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+    		                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+    		                <strong>Alert:</strong> <span id="errorText"></span></p>
+    	                </div>
+    	            </div>
+                </div>
+            </div>
+        </div>
+<%include file="footer.html" />
+
