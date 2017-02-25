@@ -12,7 +12,7 @@ Make sure you have Python installed.  This was developed on Python 2.7.10.  It h
 1. Download the project from [here](https://github.com/jealousrobot/Uffizi/archive/master.zip).
 2. Move the downloaded folder to where ever you want it on your system.
 3. In the terminal, navigate to the folder.
-4. Run Uffizi.py with the command `python Uffizi.py`.  You can use `pythong Uffizi.py --help` for a full list of options when starting Uffizi.
+4. Run Uffizi.py with the command `python Uffizi.py`.  You can use `python Uffizi.py --help` for a full list of options when starting Uffizi.
 
 You do not need to install Uffizi on the same server that is running the Plex Media Server.
 
@@ -26,7 +26,6 @@ If using a browser on a machine that is not running Uffizi.py, you can access Uf
 If this is the first time running Uffizi, you will be prompted for your plex.tv credentials.  In order for Uffizi to access your server, it requires a token from plex.tv.  Uffizi does not store your login credentials.  Just the token that is provided by plex.tv (this is similar to other tools like PlexPy).
 
 ### Adding Servers
-
 Once it has a token, Uffizi will get a list of servers you've registered at plex.tv and will display them on the Uffizi home page.  
 
 You can also manually enter a server for any unclaimed Plex servers on your network.  To manually enter a server you'll need to get the URL from your Plex Media Manager page.  The address to the Media Manager, may look like the following:
@@ -46,11 +45,9 @@ The port is the numerical value that appears after the colon.  In all four examp
 Now that we have these two values, click the "+" button in the upper right corner of the Uffizi homepage.  This will display a window where the server details can be entered.  Enter the server and port in the appropriate fields press the Submit button.  Once a server is successfully connected to you will be taken to the server's page showing the sections available in the server.
 
 ### Viewing Sections on a Server
-
 To view the sections available on a server, click on the server's image or name on the Uffizi home page.  This will take you to the server's page where the list of sections on the server are displayed.  Photo sections are not displayed as they do not have any artwork associated with them.  
 
 ### Viewing Artwork in a Section
-
 Click on one of the sections in a server and you will be taken to a page that will show you thumbnails of the posters and background artwork for all items in that section.  Using the refresh button on the lower right of each item will refresh the artwork for the item.  This is useful for when you update the artwork using the Plex Media Manager.  If the item is a TV show or a music artist a down arrow icon will also appear next to the refresh icon.  Pressing this icon will expand a tray showing the season or album artwork for the item.
 
 ## Acknowledgement
@@ -86,7 +83,6 @@ See their websites for the licenses involved with them.
 9. Removed the form on the home page for adding a server.  Adding a server manually can now be done by using the "+" button in the toolbar on the homepage. (48)
 10. Updated README.md file with new instrutions for using Uffizi based on the changes for how servers are now populated from plex.tv and the moving of the manual form to the toolbar.
 11. Created new page for displaying error messages. (49)
-
 #### Bug Fixes
 1. Fixed issue where the scrollbar background area would show up even if there was no scrollbar. (33)
 2. Fixed issue where the scrollbar wasn't showing up on the home page. (34)

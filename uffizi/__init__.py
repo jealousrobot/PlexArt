@@ -18,9 +18,8 @@
 DIR_DATA = "data"
 DB_STRING = "uffizi.db"
 SERVER_FILE = "servers.xml"
-UFFIZI_VERSION = "1.4.0"
+UFFIZI_VERSION = "0.2.0"
 PLEX_TOKEN_PARM = "X-Plex-Token="
-
 
 # Messages
 MSG_TXT = {"ERR_MISSING_DB":"Cannot find database file.  Restart Uffizi "

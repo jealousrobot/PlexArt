@@ -16,8 +16,10 @@
 
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
+
 import urllib2, os, sys, string, urllib, httplib, getopt
 import sqlite3, webbrowser
+
 
 # Ensure lib added to path, before any other imports
 # Thank you PlexPy for this!
