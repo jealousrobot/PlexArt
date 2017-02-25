@@ -16,12 +16,12 @@
 
 $(document).ready(function(){
     
-  function getKey(inputID) {
-    var idPos = inputID.search('-') + 1;
-    var keyValue = inputID.substr(idPos, inputID.length);
-        
-    return keyValue;
-  }
+  //function getKey(inputID) {
+  //  var idPos = inputID.search('-') + 1;
+  //  var keyValue = inputID.substr(idPos, inputID.length);
+  //      
+  //  return keyValue;
+  //}
       
   function getDisplayModeCookie() {
     // Set the cookie for the page and the display mode.
@@ -31,7 +31,7 @@ $(document).ready(function(){
   }
   
   function buildMetaDataURL(path) {
-    return '/metadata?server=' + gServer + '&port=' + gPort + '&path=' + path
+    return '/metadata?server=' + gServer + '&path=' + path
   }
   
   function thumbsListToggle(displayMode) {
@@ -56,7 +56,6 @@ $(document).ready(function(){
       titleClassRemove = 'list_video_title';
       
       if (gSectionType == 'movie') 
-        
         title2Class = 'video_title2_movie';
       else
         title2Class = 'video_title2_tv';
@@ -85,7 +84,7 @@ $(document).ready(function(){
     $('.' + title2ClassRemove).removeClass(title2ClassRemove).addClass(title2Class);
     
     // Call this to make sure the drawer is sized properly.
-    setDimensions();
+    setDimensionsSection();
   }
     
   function positionDrawer(seasonID) {
@@ -127,6 +126,7 @@ $(document).ready(function(){
         }
         else
           $(seasonID).css('left', 0);
+        
         // We found what we are looking for.  No need to
         // continue looping.
         break;
@@ -135,7 +135,7 @@ $(document).ready(function(){
   }
     
   // Set the width of the seasons DIV elements.
-  function setDimensions() {
+  function setDimensionsSection() {
     var seasonTop;
     var elementID;
     var seasonID;
@@ -243,7 +243,7 @@ $(document).ready(function(){
         if ($(this).attr('parentRatingKey') == elementID) {
           result += '<div class="' + div_name + '">';
           result += '    <div class="season">';
-          result += '        <div class="season_img"><img id="seasonImage-' + $(this).attr('ratingKey') + '" class="' + elementID + '" src="/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + '&type=thumb' + '" width="100" height="' + img_height + '"></div>';
+          result += '        <div class="season_img"><img id="seasonImage-' + $(this).attr('ratingKey') + '" class="' + elementID + '" src="/image?server=' + gServer + '&path=' + $(this).attr('thumb') + '&type=thumb' + '" width="100" height="' + img_height + '"></div>';
           result += '        <div class="season_title">' + $(this).attr('title') + '</div>';
           result += '    </div>';
           result += '</div>';
@@ -265,7 +265,6 @@ $(document).ready(function(){
       metaSetValue = "x";
     }
     
-    //document.getElementById('metaSlider').setAttribute('content', metaSetValue);
     gDrawerID = metaSetValue;
   }
      
@@ -303,12 +302,12 @@ $(document).ready(function(){
     function refreshData() {
       var playlistOut = '';
       var plexServer = gServer;
-      var plexPort = gPort;
+      //var plexPort = gPort;
       
       $.ajax({
         type: 'GET',
         dataType: 'html',
-        url: '/playlist?server=' + plexServer + '&port=' + plexPort + '&rating_key=' + elementID,
+        url: '/playlist?server=' + plexServer + '&rating_key=' + elementID,
         success: function(xml){
           playlistOut = xml;
           $(playlistID).html(playlistOut);
@@ -350,8 +349,8 @@ $(document).ready(function(){
         // Build the URL for the image.
         $(xml).find(sectionElement).each(function()
         {
-          thumb = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + '&type=thumb';
-          art = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('art') + '&type=background';
+          thumb = '/image?server=' + gServer + '&path=' + $(this).attr('thumb') + '&type=thumb';
+          art = '/image?server=' + gServer + '&path=' + $(this).attr('art') + '&type=background';
           
           if (displayMode == 'list') {
             $(xml).find('Genre').each(function() {
@@ -389,7 +388,7 @@ $(document).ready(function(){
               // Skip the first record as it not a season/album.
               if ($(this).attr('parentRatingKey') == elementID) {
                 seasonImageID = '#seasonImage-' + $(this).attr('ratingKey');
-                seasonImagePath = '/image?server=' + gServer + '&port=' + gPort + '&path=' + $(this).attr('thumb') + 'x' + '&type=thumb';
+                seasonImagePath = '/image?server=' + gServer + '&path=' + $(this).attr('thumb') + 'x' + '&type=thumb';
                 $(seasonImageID).attr("src", seasonImagePath);
               }
             });
@@ -471,7 +470,7 @@ $(document).ready(function(){
   $(window).resize(function(){
     // If the window is resized, reset the widths of the 
     // seasons DIVs.
-    setDimensions();
+    setDimensionsSection();
   });
     
   // Get the section type from the meta tag.
@@ -479,7 +478,7 @@ $(document).ready(function(){
     
   // Calling set_dimensions here will set the width for all of the 
   // season DIVs after the page has loaded.
-  setDimensions();
+  setDimensionsSection();
     
   if (section_type == 'show') {
     div_name = 'season_block_tv';
@@ -505,7 +504,7 @@ $(document).ready(function(){
     $.ajax({
       type: 'GET',
       dataType: 'xml',
-      url: '/metadata?server=' + gServer + '&port=' + gPort + '&path=/library/metadata/' + elementID,
+      url: '/metadata?server=' + gServer + '&path=/library/metadata/' + elementID,
       success: parseXML
     });
      

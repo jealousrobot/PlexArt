@@ -25,7 +25,8 @@
   width: 15px;
 }
 ::-webkit-scrollbar-track {
-  background-color: rgba(0,0,0,.2);
+   background-color: rgba(0,0,0,0); 
+  /* background-color: #1f1f1f; */
 }
 ::-webkit-scrollbar-thumb {
   min-height: 50px;
@@ -33,6 +34,23 @@
   border: 3px solid transparent;
   border-radius: 8px;
   background-clip: padding-box;
+}
+
+#progressbar_box {
+  width: 50%;
+  margin: 15% auto;
+}
+
+#progressbar_title {
+  text-align: center;
+}
+
+#progressbar {
+  width: 100%;
+}
+
+.bold {
+  font-weight: bold;
 }
 
 body {
@@ -54,7 +72,7 @@ a:focus {
 }
 
 #header {
-  color: #1E949A;
+  color: #ffffff;
   background: #000000;
   top: 0;
   right: 0;
@@ -66,7 +84,7 @@ a:focus {
 
 .header_link:link,
 .header_link:visited {
-  color: #1E949A;
+  color: #ffffff;
 }
 
 .header_left {
@@ -131,6 +149,10 @@ a:focus {
   margin-right: 0px; 
 }
 
+#navbar_add {
+  margin-right: 10px;
+}
+
 #results_container {
   position: relative;
   top: 90px;
@@ -167,6 +189,25 @@ a:focus {
   height: 40px;
   width: 267px;
   padding: 10px;
+  max-height: 40px;
+  max-width: 267px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.item_title2 {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.item_image {
+  height: 150px; 
 }
 
 .img_link {
@@ -271,7 +312,11 @@ a:focus {
   padding-top: 5px;
 }
 
-.form_server {
+.form_button {
+  margin-left: 41%;
+}
+
+.form_container {
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
@@ -284,33 +329,99 @@ a:focus {
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
-  width: 60%;
   visibility: hidden;
 }
 
-.server_inputs {
- width: 60%;
- margin-left: auto;
- margin-right: auto; 
-}
-
-.prior_servers {
+.form_highlight {
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
   width: 60%;
+  visibility: hidden;
 }
 
-.form_button {
-  margin-left: auto;
-  margin-right: auto;
-  width: 60%;
+.form_inputs {
+ margin-left: auto;
+ margin-right: auto; 
+}
+
+.server {
+  display: inline-block;
+  width: 367px;
+  height: 120px;
+  margin: 5px;
+  font-size: 30px;
+  font-size: 3.5vw; 
+}
+
+.server_status {
+  position: relative;
+  display: inline;
+  float: right;
+  width: 43px;
+}
+
+.sd_header {
+  padding: 5px;
+  display: table-row;
+  width: auto;
+}
+
+.sd_row {
+  padding: 5px;
+  display: table-row;
+  width: auto;
+}
+
+.sd_cell_1 {
+  float: left;/*fix for  buggy browsers*/
+  display: table-column;
+  width: 130px;
+  padding: 5px; 
+}
+
+.sd_cell_2 {
+  float: left;/*fix for  buggy browsers*/
+  display: table-column;
+  width: 100px;
+  padding: 5px;
+  border: 1px;
+}
+
+.sd_cell_3 {
+  float:left;/*fix for  buggy browsers*/
+  display:table-column;
+  width:100px;
+  padding: 5px;
+  margin: auto;
+}
+
+.sd_cell_4 {
+  float:left;/*fix for  buggy browsers*/
+  display:table-column;
+  width:100px;
+  padding: 5px;
+  margin: auto;
+}
+
+.edit_server {
+  font-size: 20px;
+}
+
+.edit_platform {
+  font-size: 12px;
+  
+}
+
+.edit_icon {
+  margin-right: 10px;
+  cursor: pointer;
 }
 
 input[type=submit],
 input[type=button] {
   width: 100%;
-  background-color: #1E949A;
+  background-color: #0F5935;
   border: none;
   color: #ffffff;
   text-decoration: none;
@@ -322,6 +433,7 @@ input[type=button] {
   font-size: 16px;
   margin: auto;
   text-align: center;
+  width: 150px;
 }
 
 #form_submit {
@@ -339,11 +451,21 @@ input[type=password] {
     border-radius: 6px;
 }
 
+input:focus { 
+    outline: none !important;
+    border-color: #0F5935;
+    box-shadow: 0 0 10px #ffffff;
+}
+
+.servers {
+  margin: auto;
+}
+
 .prior_servers {
   margin-left: auto;
   margin-right: auto;
   margin-top: 10px;
-  width: 60%;
+  /* width: 60%; */
 }
 
 .prior_server {
@@ -371,7 +493,7 @@ input[type=password] {
 
 .prior_server:hover,
 .prior_server:focus {
-  background: #1E949A;
+  background: #0F5935;
 }
 
 .prior_title {
@@ -399,6 +521,10 @@ input[type=password] {
 
 .pointer {
   cursor: pointer;
+}
+
+.arrow {
+  cursor: auto;
 }
 
 .list_video_block {

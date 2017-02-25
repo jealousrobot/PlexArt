@@ -1,0 +1,31 @@
+All images in the "os" directory share the following:
+* Released under the Creative Commons v3 License.  Found here: https://creativecommons.org/licenses/by/3.0/
+* Created by Viktor Petrovich Ivlichev.
+* Downloaded from: https://www.iconfinder.com/aha-soft
+
+Files, name as downloaded        / Files, name as used
+1481968823_linux_tux.png         / linux_tux.png        
+1481968850_apple.png             / apple.png            
+1481968870_linux_mint.png        / linux_mint.png       
+1481968886_archlinux.png         / archlinux.png        
+1481968901_ubuntu.png            / ubuntu.png           
+1481968911_microsoft_windows.png / windows8.png
+1481968922_freebsd.png           / freebsd.png          
+1481968929_windows.png           / windowsXP.png          
+1481968937_raspberry.png         / raspberry.png        
+1481968943_symbian.png           / symbian.png          
+1481968953_openbsd.png           / openbsd.png          
+1481968967_centOS.png            / centOS.png           
+1481968977_gentoo.png            / gentoo.png           
+1481968987_sidux.png             / sidux.png            
+1481968996_kubuntu.png           / kubuntu.png          
+1481969006_fedora.png            / fedora.png           
+1481969013_debian.png            / debian.png           
+1481969040_opensuse.png          / opensuse.png         
+1481969057_slackware.png         / slackware.png        
+1481969067_netbsd.png            / netbsd.png           
+1481969081_freebsd_daemon.png    / freebsd_daemon.png   
+1481969091_mandriva.png          / mandriva.png         
+1481969108_redhat.png            / redhat.png           
+1481969120_android.png           / android.png          
+1481969136_xubuntu.png           / xubuntu.png          
