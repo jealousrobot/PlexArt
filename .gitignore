@@ -13,3 +13,6 @@ servers.xml
 servers.xml
 
 data/uffizi.db
+
+cache/*
+logs/*
