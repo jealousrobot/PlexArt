@@ -19,11 +19,14 @@ import urllib, urllib2
 import base64, httplib
 from httplib import HTTPConnection
 import uuid
+import logging
 import cherrypy
 import uffizi
 from uffizi import *
 from uffizi.database import *
 from uffizi.plexserver import *
+
+logger = logging.getLogger('uffizi.api')
 
 class GetPlaylists(object):
     exposed = True  
@@ -69,7 +72,7 @@ class GetImage(object):
     
     @cherrypy.tools.accept(media="text/plain")
     def GET(self, server, path, type, width="", height=""):
-        debugp('NOW IN GetImage')
+        logger.debug('NOW IN GetImage')
         
         ps = PlexServer(server)
         
@@ -77,12 +80,12 @@ class GetImage(object):
             if path == "None":
                 raise
             if width == "" and height == "" and path != "None":
-                debugp('GetImage.GET : 1')
+                logger.debug('GetImage.GET : 1')
                 # Get the URL to the image
                 url = ps.get_url(path)
                 image = urllib2.urlopen(url)
             else:
-                debugp('GetImage.GET : 2')
+                logger.debug('GetImage.GET : 2')
                 # Get the URL for the image escaped and without the plex token.  
                 url_escaped = urllib.quote_plus(ps.get_url(path, {}, False))
                 
@@ -98,7 +101,7 @@ class GetImage(object):
                     url = ps.get_url(path)
                     image = urllib2.urlopen(url)
         except:
-            debugp('GetImage.GET : 3')
+            logger.debug('GetImage.GET : 3')
             if type == "background":
                 imageName = "emptyBackground"
             elif type == "thumb":
@@ -261,8 +264,8 @@ class EditServerDetails (object):
     
     @cherrypy.tools.accept(media="text/plan")
     def GET(self, server, **kwargs):
-        debugp('server', server)
-        debugp('parms', kwargs)
+        logger.debug('server', server)
+        logger.debug('parms', kwargs)
         
         for key, value in kwargs.iteritems():
             parms = value.split(',')

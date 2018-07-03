@@ -20,6 +20,7 @@ DB_STRING = "uffizi.db"
 SERVER_FILE = "servers.xml"
 UFFIZI_VERSION = "0.2.1"
 PLEX_TOKEN_PARM = "X-Plex-Token="
+LOG_FILE = "uffizi.log"
 
 # Messages
 MSG_TXT = {"ERR_MISSING_DB":"Cannot find database file.  Restart Uffizi "
@@ -39,9 +40,6 @@ arg_nolaunch = False
 
 plex_token = ''
 
-def debugp(key, value=""):
-    if arg_debug:
-        print '***** {0} : {1}'.format(key, value)
         
 def nvl(val, when_null):
     return val or when_null
