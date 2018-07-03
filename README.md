@@ -70,6 +70,12 @@ Uffizi uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 0.2.1 
+#### New Features
+1. Issue tracking has moved to GitHub.  All referenced issue numbers from this release forward relate to issues on GitHub. (16)
+#### Bug Fixes
+1. Fixed missing image for a Plex cloud server. (15)
+
 ### 0.2.0 Server Enhancement Edition
 #### New Features
 1. When you sign in for the first time, Uffizi will now fetch a list of servers from plex.tv avoiding the need to manually add servers.  This will only work on servers that you have claimed.  An unclaimed server on your network will still need to be entered manually (9).
