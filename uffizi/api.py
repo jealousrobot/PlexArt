@@ -36,34 +36,38 @@ class GetPlaylists(object):
         
         ps = PlexServer(server)
         
-        playlist_out = ""
+        playlist_out = "None"
+        pl_list = []
         
         playlists = ps.get_playlists()
         
         for playlist in playlists:
             playlist_title = playlist.get("title")
             playlist_key = playlist.get("key")
+            playlist_rating_key = playlist.get('ratingKey')
             
+            # Get the individual items that make up the playlist.
             playlist_items = ps.get_playlist_items(playlist_key)
             
             for video in playlist_items:
-                playlist_rating_key = video.get("ratingKey")
-                playlist_gp_key = video.get("grandparentRatingKey")
+                pl_rating_key = video.get("ratingKey")
+                pl_gp_rating_key = video.get("grandparentRatingKey")
                 
                 # Check if the grandparent key is populated.  If it is, 
                 # this item is an episode or song.  In that case, we use
                 # the grandparent key as that is the TV show or artist that
                 # this item belongs to.
-                if not playlist_gp_key:
-                    key_to_use = playlist_rating_key
+                if not pl_gp_rating_key:
+                    key_for_item = pl_rating_key
                 else:
-                    key_to_use = playlist_gp_key
+                    key_for_item = pl_gp_rating_key
                     
-                if key_to_use == rating_key:
-                    if playlist_out:
-                        playlist_out += " / " + playlist_title
-                    else:
-                        playlist_out = playlist_title
+                if key_for_item == rating_key:
+                    if playlist_title not in pl_list:
+                        pl_list.append(playlist_title)
+                            
+        if pl_list:
+            playlist_out = ' / '.join(pl_list)
                 
         return playlist_out
 

@@ -213,10 +213,19 @@ class PlexServer(object):
         
         return self.get_xml(section_path)
         
+    def get_video(self, key):
+        video_path = "library/metadata/{0}".format(key)
+        return self.get_xml(video_path)
+        
+    def get_video_children(self, key):
+        video_path = "library/metadata/{0}/children".format(key)
+        return self.get_xml(video_path)
+        
     def get_playlists(self):
         return self.get_xml("/playlists")
         
     def get_playlist_items(self, key):
+        # For playlist items the "key" contains the path needed for the URL.
         return self.get_xml(key)
         
     def add_server(self, source):
@@ -251,3 +260,8 @@ class PlexServer(object):
         db.update_server_addr(self.server, address, port, valid, always);
         db.commit()
         db.close()
+        
+    def get_filtered_list(self, section_key, filter_name, filter_key):
+        path = 'library/sections/{0}/all'.format(section_key)
+        parms = {filter_name:filter_key}
+        return self.get_xml(path, parms)
