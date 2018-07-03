@@ -18,8 +18,12 @@ import sqlite3
 import os
 import urllib2
 
+import logging
+
 import uffizi
 from uffizi import *
+
+logger = logging.getLogger('Uffizi.database')
 
 class Database(object):
     def __init__(self):
@@ -156,7 +160,7 @@ class Database(object):
     def update_server_addr(self, server_name, address, port, valid, always):
         parms = (valid, always, server_name, address, port)
         
-        debugp('parms', parms)
+        logger.debug('parms', parms)
         
         sql = "UPDATE SERVER_ADDR " \
               "   SET VALID = ? " \
@@ -168,6 +172,8 @@ class Database(object):
         self.__execute(sql, parms, False)
               
     def get_servers(self):
+        
+        logger.info("Getting servers")
         
         sql = "SELECT SERVER_NAME " \
               "     , PLATFORM " \

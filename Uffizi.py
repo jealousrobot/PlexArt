@@ -20,6 +20,8 @@ import xml.dom.minidom as minidom
 import urllib2, os, sys, string, urllib, httplib, getopt
 import sqlite3, webbrowser
 
+import logging
+from logging import handlers
 
 # Ensure lib added to path, before any other imports
 # Thank you PlexPy for this!
@@ -328,9 +330,40 @@ if __name__ == "__main__":
             uffizi.arg_nolaunch = True
             
     if uffizi.arg_debug:
-        print "UFFIZI COMMAND LINE OPTIONS"
-        print " debug    : ", uffizi.arg_debug
-        print " nolaunch : ", uffizi.arg_nolaunch
+        log_level = logging.DEBUG
+    else:
+        log_level = logging.INFO
+        
+    # Set up logging
+    logger = logging.getLogger('uffizi')
+    logger.setLevel(log_level)
+    
+    # Create console handler to write messages to the command line.
+    logger_console = logging.StreamHandler()
+    logger_console.setLevel(log_level)
+    
+    # Create file handler to write message to the log file.
+    if not os.path.exists(os.path.join(os.path.dirname(__file__), "logs")):
+        os.makedirs(os.path.join(os.path.dirname(__file__), "logs"))
+        
+    filename = os.path.join(os.path.dirname(__file__), "logs", LOG_FILE)
+    logger_file = handlers.TimedRotatingFileHandler(filename=filename, when="D", backupCount=10)
+    logger_file.setLevel(log_level)
+    
+    # Set the format for the log messages
+    formatter = logging.Formatter('[%(asctime)s][%(name)s][%(levelname)s] %(message)s', datefmt="%Y/%m/%d %I:%M:%S %p")
+    
+    # Set the format for the console and file handlers.
+    logger_console.setFormatter(formatter)
+    logger_file.setFormatter(formatter)
+    
+    # Add the handlers to the logger.
+    logger.addHandler(logger_console)
+    logger.addHandler(logger_file)
+        
+    logger.info("Command line options")
+    logger.info("  debug : %s", uffizi.arg_debug)
+    logger.info("  nolanuch : %s", uffizi.arg_nolaunch)
     
     # Configure settings for cherrypy.
     conf = {
