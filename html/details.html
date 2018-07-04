@@ -28,9 +28,12 @@ Input variables to the page:
 
 <%
     ##title = ' : ' + server + ' : ' + section_title + ' : ' + video_title
-    title = ' : {0} : {1} : {2}'.format(server, section_title, video_title)
+    title = u' : {} Details'.format(video_title)
+    
     ##header = ' : <a class="header_link" href="server?server=' + server + '">' + server + '</a> : ' + video_title
-    header = ' : <a class="header_link" href="server?server={0}">{0}</a> : <a class="header_link" href="section?server={0}&key={1}&section={2}">{2}</a> : {3}'.format(server, section_key, section_title, video_title)
+    header = u' : <a class="header_link" href="server?server={0}">{0}</a> : <a class="header_link" href="section?server={0}&key={1}&section={2}">{2}</a> : {3}'.format(server, section_key, section_title, video_title)
+    
+    
     
     js_script = '<script>'
     js_script += '  var gDrawerID = "";'

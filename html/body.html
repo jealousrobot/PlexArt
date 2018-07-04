@@ -47,6 +47,11 @@
             ##   doesn't have children it wont' have a childcount tag,
             ##   but what the heck was I thinking with adding 1 to the
             ##   the count!!
+            ##
+            ##  The adding 1 is needed for the for loop towards the 
+            ##  bottom.  It uses range, which goes from 0 to childCount
+            ##  and if childCount is incremented by 1 the loop will be 
+            ##  1 iteration short.
             ## *********************************************************                
             if item.get('childCount') is None:
                 childCount = 1
