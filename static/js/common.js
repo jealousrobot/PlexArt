@@ -30,6 +30,6 @@ function setDimensions(){
 }
 
 
-function buildMetaDataURL(path) {
+function buildMetaDataURL(path) { 
   return '/metadata?server=' + gServer + '&path=' + path
 }
