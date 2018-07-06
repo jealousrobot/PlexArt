@@ -87,6 +87,7 @@ class GetImage(object):
                 logger.debug('GetImage.GET : 1')
                 # Get the URL to the image
                 url = ps.get_url(path)
+                cherrypy.response.headers['Content-Type'] = 'image/png'
                 image = urllib2.urlopen(url)
             else:
                 logger.debug('GetImage.GET : 2')
@@ -100,9 +101,11 @@ class GetImage(object):
                 # resized version.
                 try:
                     url = ps.get_url("/photo/:/transcode", parms)
+                    cherrypy.response.headers['Content-Type'] = 'image/png'
                     image = urllib2.urlopen(url)
                 except:
                     url = ps.get_url(path)
+                    cherrypy.response.headers['Content-Type'] = 'image/png'
                     image = urllib2.urlopen(url)
         except:
             logger.debug('GetImage.GET : 3')
@@ -113,6 +116,7 @@ class GetImage(object):
             else:
                 imageName = "emptyMusicThumb"
                 
+            cherrypy.response.headers['Content-Type'] = 'image/png'
             image = urllib2.urlopen("http://localhost:3700/static/images/" + imageName + ".png")
         
         return image
