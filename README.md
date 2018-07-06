@@ -70,6 +70,19 @@ Uffizi uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 0.2.2
+#### New Features
+1. Reworked body.html to make it reliant on a custom XML dataset instead of using the XML as delivered from the Plex API.  This should make the page easier to expand in the future. (27)
+2. Added logging using the Python loggin module.  Launch Uffizi with the -d switch to make use of this. (43)
+3. Created a new details page for an item.  Clicking on the name of an item will now take you to a page for just that item.  For now the page just shows what can be seen in the list view, but future enhancements will bring more details. (20).
+#### Bug Fixes
+1. Choosing to save an image will now save the image in an image format, not text. (51)
+2. List or thumbnail mode will be remembered using the back button or refresh. (50)
+3. When refreshing an item, "none" will be displayed when the item doesn't contain anything in that field.  For example, "none" will be displayed in the Collections field if the item doesn't belong to any collections. (49)
+4. Refreshing a TV show will no longer show duplicates in the Playlist field. (48)
+5. Fixed typos in the README.MD file. (23)
+
+
 ### 0.2.1 
 #### New Features
 1. Issue tracking has moved to GitHub.  All referenced issue numbers from this release forward relate to issues on GitHub. (16)
