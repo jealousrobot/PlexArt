@@ -16,6 +16,7 @@
 
 import xml.etree.ElementTree as ET
 import urllib, urllib2, httplib
+import logging
 
 from socket import error as socket_error
 
@@ -24,6 +25,8 @@ from uffizi.database import *
 from uffizi.exceptions import *
 
 import cherrypy
+
+logger = logging.getLogger('uffizi.plexserver')
     
 class PlexServer(object):
     def __init__(self, server="", address="", port=""):
@@ -122,7 +125,7 @@ class PlexServer(object):
                 
             url +=  uffizi.PLEX_TOKEN_PARM + uffizi.plex_token
             
-        debugp('PlexServer.get_plex_url : url', url)
+        logger.debug("PlexServer.get_plex_url : {}".format(url))
         return url
             
     @staticmethod
@@ -183,10 +186,10 @@ class PlexServer(object):
         return PlexServer.get_plex_url(self.address, self.port, path, parms, include_token)
         
     def get_xml(self, path=""):
-        debugp('path', path)
+        logger.debug("path : {}".format(path))
         url = self.get_url(path)
         
-        print('url'),url
+        logger.debug("url : {}".format(url))
         
         try:
             root = ET.ElementTree(file=urllib2.urlopen(url)).getroot()
@@ -210,10 +213,19 @@ class PlexServer(object):
         
         return self.get_xml(section_path)
         
+    def get_video(self, key):
+        video_path = "library/metadata/{0}".format(key)
+        return self.get_xml(video_path)
+        
+    def get_video_children(self, key):
+        video_path = "library/metadata/{0}/children".format(key)
+        return self.get_xml(video_path)
+        
     def get_playlists(self):
         return self.get_xml("/playlists")
         
     def get_playlist_items(self, key):
+        # For playlist items the "key" contains the path needed for the URL.
         return self.get_xml(key)
         
     def add_server(self, source):
@@ -239,12 +251,17 @@ class PlexServer(object):
         db.close()
         
     def update_server_addr(self, address, port, valid, always):
-        debugp('address', address)
-        debugp('port', port)
-        debugp('valid', valid)
-        debugp('always', always)
+        logger.debug("address : ".format(address))
+        logger.debug("port : ".format(port))
+        logger.debug("valid : ".format(valid))
+        logger.debug("always : ".format(always))
         
         db = Database()
         db.update_server_addr(self.server, address, port, valid, always);
         db.commit()
         db.close()
+        
+    def get_filtered_list(self, section_key, filter_name, filter_key):
+        path = 'library/sections/{0}/all'.format(section_key)
+        parms = {filter_name:filter_key}
+        return self.get_xml(path, parms)

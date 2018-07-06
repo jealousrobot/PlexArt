@@ -34,7 +34,7 @@ You can also manually enter a server for any unclaimed Plex servers on your netw
 * http://myplexserver.local:32400/web/index.html
 * http://192.168.0.37:32400/web/index.html
 
-We are interested in in the server name/addres and the port number.  The server name/address is the value that appears between the two slashes and the colon.  In the examples above that would be:
+We are interested in in the server name/address and the port number.  The server name/address is the value that appears between the two slashes and the colon.  In the examples above that would be:
 * 127.0.0.1
 * localhost
 * jayne.local
@@ -51,7 +51,7 @@ To view the sections available on a server, click on the server's image or name 
 Click on one of the sections in a server and you will be taken to a page that will show you thumbnails of the posters and background artwork for all items in that section.  Using the refresh button on the lower right of each item will refresh the artwork for the item.  This is useful for when you update the artwork using the Plex Media Manager.  If the item is a TV show or a music artist a down arrow icon will also appear next to the refresh icon.  Pressing this icon will expand a tray showing the season or album artwork for the item.
 
 ## Acknowledgement
-This project would not be possible without [PlexPy](https://github.com/drzoidberg33/plexpy).  Having that for a reference was invaluable in creating Uffizi
+This project would not be possible without [Tautulli](https://github.com/Tautulli/Tautulli).  Having that for a reference was invaluable in creating Uffizi
 
 ## License
 Uffizi is licensed under GPL v3.0.
@@ -70,6 +70,19 @@ Uffizi uses the following 3rd party packages/scripts:
 See their websites for the licenses involved with them.
 
 ## Change Log
+### 0.2.2
+#### New Features
+1. Reworked body.html to make it reliant on a custom XML dataset instead of using the XML as delivered from the Plex API.  This should make the page easier to expand in the future. (27)
+2. Added logging using the Python loggin module.  Launch Uffizi with the -d switch to make use of this. (43)
+3. Created a new details page for an item.  Clicking on the name of an item will now take you to a page for just that item.  For now the page just shows what can be seen in the list view, but future enhancements will bring more details. (20).
+#### Bug Fixes
+1. Choosing to save an image will now save the image in an image format, not text. (51)
+2. List or thumbnail mode will be remembered using the back button or refresh. (50)
+3. When refreshing an item, "none" will be displayed when the item doesn't contain anything in that field.  For example, "none" will be displayed in the Collections field if the item doesn't belong to any collections. (49)
+4. Refreshing a TV show will no longer show duplicates in the Playlist field. (48)
+5. Fixed typos in the README.MD file. (23)
+
+
 ### 0.2.1 
 #### New Features
 1. Issue tracking has moved to GitHub.  All referenced issue numbers from this release forward relate to issues on GitHub. (16)
@@ -80,14 +93,14 @@ See their websites for the licenses involved with them.
 #### New Features
 1. When you sign in for the first time, Uffizi will now fetch a list of servers from plex.tv avoiding the need to manually add servers.  This will only work on servers that you have claimed.  An unclaimed server on your network will still need to be entered manually (9).
 2. Uffizi will now check if a server is online when you visit the Uffizi homepage.  If the server is offline you will not be able to visit it.  Online servers have a green checkmark next to the server name.  Offline servers have a red "x".  (13)
-3. Some server details can now be editted. (22)
+3. Some server details can now be edited. (22)
 4. Data need by Uffizi is now stored in a database instead of text file. (25)
 5. Servers on the homepage are now represented by graphics showing the OS of the server and a title bar instead of a button.  This makes the homepage visually look similar to the server and section pages. (35)
 6. When starting Uffizi, if a token is needed, the browser will launch with the sign-in page displayed. (38)
-7. Added command line switches to be used when starting Uffizi.  Enter "pythong Uffizi.py --help" for a full list. (39)
+7. Added command line switches to be used when starting Uffizi.  Enter "python Uffizi.py --help" for a full list. (39)
 8. Add button on the homepage to refresh servers from plex.tv. (43)
 9. Removed the form on the home page for adding a server.  Adding a server manually can now be done by using the "+" button in the toolbar on the homepage. (48)
-10. Updated README.md file with new instrutions for using Uffizi based on the changes for how servers are now populated from plex.tv and the moving of the manual form to the toolbar.
+10. Updated README.md file with new instructions for using Uffizi based on the changes for how servers are now populated from plex.tv and the moving of the manual form to the toolbar.
 11. Created new page for displaying error messages. (49)
 #### Bug Fixes
 1. Fixed issue where the scrollbar background area would show up even if there was no scrollbar. (33)
@@ -113,7 +126,7 @@ None
 #### New Features
 None
 #### Bug Fixes
-1. Changed the password input box to a masked input box.  It was inadvertantly left as a regular text which was used during testing as to make sure passwords were entered correctly to avoid validation failures.
+1. Changed the password input box to a masked input box.  It was inadvertently left as a regular text which was used during testing as to make sure passwords were entered correctly to avoid validation failures.
 
 ### 0.1.2 Now with Plex.tv token support
 #### New Features

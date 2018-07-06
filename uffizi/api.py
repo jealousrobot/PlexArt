@@ -19,11 +19,14 @@ import urllib, urllib2
 import base64, httplib
 from httplib import HTTPConnection
 import uuid
+import logging
 import cherrypy
 import uffizi
 from uffizi import *
 from uffizi.database import *
 from uffizi.plexserver import *
+
+logger = logging.getLogger('uffizi.api')
 
 class GetPlaylists(object):
     exposed = True  
@@ -33,34 +36,38 @@ class GetPlaylists(object):
         
         ps = PlexServer(server)
         
-        playlist_out = ""
+        playlist_out = "None"
+        pl_list = []
         
         playlists = ps.get_playlists()
         
         for playlist in playlists:
             playlist_title = playlist.get("title")
             playlist_key = playlist.get("key")
+            playlist_rating_key = playlist.get('ratingKey')
             
+            # Get the individual items that make up the playlist.
             playlist_items = ps.get_playlist_items(playlist_key)
             
             for video in playlist_items:
-                playlist_rating_key = video.get("ratingKey")
-                playlist_gp_key = video.get("grandparentRatingKey")
+                pl_rating_key = video.get("ratingKey")
+                pl_gp_rating_key = video.get("grandparentRatingKey")
                 
                 # Check if the grandparent key is populated.  If it is, 
                 # this item is an episode or song.  In that case, we use
                 # the grandparent key as that is the TV show or artist that
                 # this item belongs to.
-                if not playlist_gp_key:
-                    key_to_use = playlist_rating_key
+                if not pl_gp_rating_key:
+                    key_for_item = pl_rating_key
                 else:
-                    key_to_use = playlist_gp_key
+                    key_for_item = pl_gp_rating_key
                     
-                if key_to_use == rating_key:
-                    if playlist_out:
-                        playlist_out += " / " + playlist_title
-                    else:
-                        playlist_out = playlist_title
+                if key_for_item == rating_key:
+                    if playlist_title not in pl_list:
+                        pl_list.append(playlist_title)
+                            
+        if pl_list:
+            playlist_out = ' / '.join(pl_list)
                 
         return playlist_out
 
@@ -69,7 +76,7 @@ class GetImage(object):
     
     @cherrypy.tools.accept(media="text/plain")
     def GET(self, server, path, type, width="", height=""):
-        debugp('NOW IN GetImage')
+        logger.debug('NOW IN GetImage')
         
         ps = PlexServer(server)
         
@@ -77,12 +84,13 @@ class GetImage(object):
             if path == "None":
                 raise
             if width == "" and height == "" and path != "None":
-                debugp('GetImage.GET : 1')
+                logger.debug('GetImage.GET : 1')
                 # Get the URL to the image
                 url = ps.get_url(path)
+                cherrypy.response.headers['Content-Type'] = 'image/png'
                 image = urllib2.urlopen(url)
             else:
-                debugp('GetImage.GET : 2')
+                logger.debug('GetImage.GET : 2')
                 # Get the URL for the image escaped and without the plex token.  
                 url_escaped = urllib.quote_plus(ps.get_url(path, {}, False))
                 
@@ -93,12 +101,14 @@ class GetImage(object):
                 # resized version.
                 try:
                     url = ps.get_url("/photo/:/transcode", parms)
+                    cherrypy.response.headers['Content-Type'] = 'image/png'
                     image = urllib2.urlopen(url)
                 except:
                     url = ps.get_url(path)
+                    cherrypy.response.headers['Content-Type'] = 'image/png'
                     image = urllib2.urlopen(url)
         except:
-            debugp('GetImage.GET : 3')
+            logger.debug('GetImage.GET : 3')
             if type == "background":
                 imageName = "emptyBackground"
             elif type == "thumb":
@@ -106,6 +116,7 @@ class GetImage(object):
             else:
                 imageName = "emptyMusicThumb"
                 
+            cherrypy.response.headers['Content-Type'] = 'image/png'
             image = urllib2.urlopen("http://localhost:3700/static/images/" + imageName + ".png")
         
         return image
@@ -261,8 +272,8 @@ class EditServerDetails (object):
     
     @cherrypy.tools.accept(media="text/plan")
     def GET(self, server, **kwargs):
-        debugp('server', server)
-        debugp('parms', kwargs)
+        logger.debug('server', server)
+        logger.debug('parms', kwargs)
         
         for key, value in kwargs.iteritems():
             parms = value.split(',')

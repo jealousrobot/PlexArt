@@ -269,8 +269,19 @@ a:focus {
   width: 95%;
 }
 
+.video_link:link,
+.video_link:visited {
+  text-decoration: none; 
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.video_link:hover,
+.video_link:focus {
+  text-decoration: underline; 
+}
+
 .seasons {
-  display: none; 
   background: #333333;
   position: relative;  
   float: left;
@@ -280,8 +291,13 @@ a:focus {
   z-index: 1000000;
 }
 
+.seasons_regular {
+  display: none; 
+}
+
 .season_block_tv,
-.season_block_music {
+.season_block_music
+.season_block_details {
   display: inline-block;
   width: 100px;
   margin-right: 10px;
@@ -587,6 +603,19 @@ input:focus {
 
 }
 
+.list_link:link,
+.list_link:visited {
+  color: #ffffff;
+  text-decoration: none; 
+  font-size: 13px;
+  display: inline; 
+}
+
+.list_link:hover,
+.list_link:focus {
+  text-decoration: underline;
+}
+
 /* Everything that appers between this comment and the one below were found
    here: http://joshnh.com/weblog/how-to-make-an-alert-bar/ */
 #alert {
@@ -696,3 +725,12 @@ input:focus {
 }
 
 /* End CSS found at joshnh.com. */
+
+.details_seasons {
+  background: #333333;
+  position: relative;  
+  float: left;
+  padding: 10px;
+  margin-right: 15px;
+  width: 10px;
+}
