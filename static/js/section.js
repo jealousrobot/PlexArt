@@ -25,14 +25,15 @@ $(document).ready(function(){
       
   function getDisplayModeCookie() {
     // Set the cookie for the page and the display mode.
-    var cookieDisplayMode = 'displayMode-' + Cookies.get('server') + '-' + Cookies.get('key');
+    //var cookieDisplayMode = 'displayMode-' + Cookies.get('server') + '-' + Cookies.get('key');
+    var cookieDisplayMode = 'displayMode-' + gServer + '-' + gKey;
       
     return cookieDisplayMode;
   }
   
-  function buildMetaDataURL(path) {
-    return '/metadata?server=' + gServer + '&path=' + path
-  }
+  //function buildMetaDataURL(path) {
+  //  return '/metadata?server=' + gServer + '&path=' + path
+  //}
   
   function thumbsListToggle(displayMode) {
         
@@ -329,8 +330,8 @@ $(document).ready(function(){
         var thumb = '';
         var art = '';
         var sectionElement = '';
-        var genreOut = '';
-        var collectionOut = '';
+        var genreOut = 'None';
+        var collectionOut = 'None';
         var playlistOut = '';
         
         // Get the information for playlists this item belongs to.  Playlists
@@ -354,17 +355,17 @@ $(document).ready(function(){
           
           if (displayMode == 'list') {
             $(xml).find('Genre').each(function() {
-              if (genreOut) 
-                genreOut = genreOut + ' / ' + $(this).attr('tag');
-              else
+              if (genreOut == 'None') 
                 genreOut = $(this).attr('tag');
+              else
+                genreOut = genreOut + ' / ' + $(this).attr('tag');
             });
             
             $(xml).find('Collection').each(function() {
-              if (collectionOut)
-                collectionOut = collectionOut + ' / ' + $(this).attr('tag');
-              else
+              if (collectionOut == 'None')
                 collectionOut = $(this).attr('tag');
+              else
+                collectionOut = collectionOut + ' / ' + $(this).attr('tag');
             });
           }
         });
@@ -558,8 +559,8 @@ $(document).ready(function(){
       if (!collection)
         collection = 'None'
          
-      $(genreDIV).html(genre);
-      $(collectionDIV).html(collection);
+      //$(genreDIV).html(genre);
+      //$(collectionDIV).html(collection);
     }
   }
 });

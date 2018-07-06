@@ -14,34 +14,17 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-<%page args="videos='', page_type='none'"/>
+<%page args="items='', page_type='none'"/>
         <div id="navbar">
 <% 
     priorValue = 'xx' 
 %>
-% for video in videos:
-    ## Use the sort title for the video/section if its available.  If the sort 
-    ## title hasn't been set, it will be blank.
-    <% 
-        if video.get('titleSort'):
-            currentValue = video.get('titleSort')
-        else:
-            currentValue = video.get('title')
-    %>          
-    ## Items that start with a number are all grouped into the pound sign 
-    ## character just like Plex does.
-    <% 
-        currentValue = currentValue[0:1] 
-        if currentValue in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-            currentValue = '#'
-        else:
-            currentValue = currentValue.upper()
-    %>
+% for item in items:
     ## If the begining letter has changed, create a link for the new letter.
-    % if priorValue != currentValue:
-            <div class="navbar_block"><a class="navbar_link" href="#${currentValue}">${currentValue}</a></div>
+    % if priorValue != item.get('sortLetter'):
+            <div class="navbar_block"><a class="navbar_link" href="#${item.get('sortLetter')}">${item.get('sortLetter')}</a></div>
         <% 
-            priorValue = currentValue 
+            priorValue = item.get('sortLetter') 
         %>
     % endif
 % endfor

@@ -28,3 +28,8 @@ function setDimensions(){
   var resultsHeight = window.innerHeight - 90;
   $('#results').css('height', resultsHeight);
 }
+
+
+function buildMetaDataURL(path) { 
+  return '/metadata?server=' + gServer + '&path=' + path
+}
