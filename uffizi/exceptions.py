@@ -31,3 +31,11 @@ class uffiziInvalidServer(Exception):
 class uffiziExpiredToken(Exception):
     def __init__(self):
         self.msg = MSG_TEXT["EXPIRED_TOKEN"]
+        
+class DatabaseInvalidSourceError(Exception):
+   def __init__(self, invalid_source, valid_sources):
+        msg = "Souce `{}` is not a valid souce.  Valid sources are: {}".format(invalid_source, 
+                                                     valid_sources)
+        super(DatabaseInvalidSourceError, self).__init__(msg)
+        self.invalid_source = invalid_source
+        self.vald_sources = valid_sources

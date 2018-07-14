@@ -32,7 +32,8 @@ MSG_TXT = {"ERR_MISSING_DB": "Cannot find database file.  Restart Uffizi from "
                             "to get a new token.",
            "PLEX_TV_UNREACHABLE": "Cannot reach plex.tv.  Try adding the "
                                   "server manually.",
-           "SERVER_INVALID": "Server '{0}' does not exist in Uffizi."}
+           "SERVER_INVALID": "Server '{0}' does not exist in Uffizi.",
+           "INVALID_SOURCE": "Source {} is not a valid source. Valid values are {}"}
                                  
 # Globals
 arg_debug = False

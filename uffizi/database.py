@@ -16,21 +16,23 @@
 
 import sqlite3
 import os
+import ipaddress
 
 import logging
 
 import uffizi
-# from uffizi import *
+#from uffizi.exceptions import *
 
-logger = logging.getLogger('Uffizi.database')
+logger = logging.getLogger("Uffizi.database")
 
 PARM_RETURN_ALL = True
 PARM_RETURN_ONE = False
+VALID_SOURCE = ("plex.tv", "manual")
+VALID_YES_NO = ("N", "Y")
 
 
 class Database(object):
     """Methods for interacting the the Uffizi database."""
-    
     
     def __init__(self, database_path=""):
         """ Start connection to the SQLite database.
@@ -246,6 +248,12 @@ class Database(object):
             None
         """
         
+        if source not in VALID_SOURCE:
+            raise InvalidSourceError(source)
+            
+        if self.server_exists(server_name):
+            raise ServerExistsError(server_name)
+        
         parms = (server_name, platform, source)
         
         sql = "INSERT INTO SERVER " \
@@ -268,7 +276,25 @@ class Database(object):
         Returns:
             None
         """
-        parms = (server_name, address, port, valid)
+        
+        if not self.server_exists(server_name):
+            raise ServerDoesNotExistError(server_name)
+            
+        if self.server_addr_exists(server_name, address, port):
+            raise ServerAddrExistsError(server_name, address, port)
+            
+        try:
+            ipaddress.ip_address(address)
+        except ValueError:
+            raise InvalidAddressError(server_name, address)
+            
+        if int(port) < 0 or int(port) > 65535:
+            raise InvalidPortError(server_name, port)
+            
+        if valid.upper() not in VALID_YES_NO:
+            raise InvalidValidError(server_name, valid)
+            
+        parms = (server_name, address, port, valid.upper())
         
         sql = "INSERT INTO SERVER_ADDR " \
               "  (SERVER_NAME, ADDRESS, PORT, VALID, ALWAYS_USE) " \
@@ -419,11 +445,65 @@ class Database(object):
               " WHERE SERVER_NAME = ?"
         self.__execute(sql, parms)
         
-    # def get_attributes(self, server):
-    #    parms = (server,)
-    #    
-    #    sql = "SELECT * " \
-    #          "  FROM SERVER " \
-    #          " WHERE SERVER_NAME = ?"
-    #          
-    #    return self.__execute(sql, parms, PARM_RETURN_ONE)
+    def get_attributes(self, server):
+        parms = (server,)
+        
+        sql = "SELECT * " \
+              "  FROM SERVER " \
+              " WHERE SERVER_NAME = ?"
+              
+        return self.__execute(sql, parms, PARM_RETURN_ONE)
+
+
+class InvalidSourceError(Exception):
+   def __init__(self, invalid_source):
+        msg = "Source `{}` is not a valid source.  Valid sources are:".format(invalid_source)
+        
+        for item in VALID_SOURCE:
+            msg = "{} {},".format(msg, item)
+            
+        msg = msg[:-1]
+            
+        super(InvalidSourceError, self).__init__(msg)
+        self.invalid_source = invalid_source
+
+class ServerExistsError(Exception):
+    def __init__(self, invalid_server):
+        msg = "Server `{}` already exists.".format(invalid_server)
+        super(ServerExistsError, self).__init__(msg)
+        self.invalid_server = invalid_server
+        
+class ServerDoesNotExistError(Exception):
+    def __init(self, server):
+        msg = "Server `{}` does not exists.  Cannot insert SERVER_ADDR record".format(server)
+        super(ServerDoesNotExistError, self).__init__(msg)
+        sefl.server = server
+        
+class ServerAddrExistsError(Exception):
+    def __init__(self, server, address, port):
+        msg = "Server Addr `{} : {} : {}` already exists.".format(server, address, port)
+        super(ServerAddrExistsError, self).__init__(msg)
+        self.server = server
+        self.address = address
+        self.port = port
+        
+class InvalidAddressError(Exception):
+    def __init__(self, server, address):
+        msg = "Invalid IP Address for server {} with address of {}".format(server, address)
+        super().__init__(msg)
+        self.server = server
+        self.address = address
+        
+class InvalidPortError(Exception):
+    def __init__(self, server, port):
+        msg = "Invalid port for server {} with port of {}".format(server, port)
+        super().__init__(msg)
+        self.server = server
+        self.port = port
+        
+class InvalidValidError(Exception):
+    def __init__(self, server, valid):
+        msg = "Invalid value for valid parameter `{}` for server {}".format(server, valid)
+        super().__init__(msg)
+        self.server = server
+        self.valid = valid
