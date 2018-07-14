@@ -61,7 +61,7 @@ class Uffizi(object):
         # Set the plex.tv token to the global value uffizi.plex_token.  If no
         # token is found, set the flag that will cause the sign in page to be
         # displayed.
-        uffizi.plex_token = db.get_stored_token()
+        uffizi.plex_token = db.get_token()
         db.close()
     
         if uffizi.plex_token is None:

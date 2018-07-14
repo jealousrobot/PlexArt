@@ -16,20 +16,60 @@
 
 import sqlite3
 import os
-import urllib2
 
 import logging
 
 import uffizi
-from uffizi import *
+# from uffizi import *
 
 logger = logging.getLogger('Uffizi.database')
 
+PARM_RETURN_ALL = True
+PARM_RETURN_ONE = False
+
+
 class Database(object):
-    def __init__(self):
-        self.conn = sqlite3.connect(uffizi.DIR_DATA + '/' + uffizi.DB_STRING)
+    """Methods for interacting the the Uffizi database."""
+    
+    
+    def __init__(self, database_path=""):
+        """ Start connection to the SQLite database.
+        
+        Args:
+            database_path (str): The file name, including the full path, to the 
+                SQLite database file.  If not provided, the default value
+                stored in package level variables DIR_DATA and DB_STRING will 
+                be used.  The only time this should be used is when using
+                the class in a test script.
+                
+        Returns:
+            None
+        """
+                
+        if database_path:
+            self.conn = sqlite3.connect(database_path)
+        else:
+            self.conn = sqlite3.connect(os.path.join(uffizi.DIR_DATA, 
+                                                     uffizi.DB_STRING))
         
     def __execute(self, sql, parms=(), return_all=False):
+        """Execute a SQL statement.
+        
+        Args:
+            sql (str): The SQL to be executed.
+            parms (tuple): The parameters to be passed to the SQL statement.
+            return_all (bool): Whether or not all rows from the result set should be
+                returned or just one.  True will return all rows.  False will
+                return only one.
+                
+        Returns:
+            If the return_all parameter is false, one row of data from the SQL
+            statement provided in the sql parameter.
+            
+            If the return_all parameter is true, all rows of data from the SQL
+            statement provided in the sql parameter.
+        """
+        
         sql_result = self.conn.execute(sql, parms)
         
         if return_all:
@@ -38,19 +78,35 @@ class Database(object):
             return sql_result.fetchone()
     
     def startup(self):
-        # Check if the tables exist in the database.  If they don', create it.
+        """Steps to execute each time the database is started.
+        
+        At this time, the method only performs one action, which is to ensure
+        that the tables exist in the database.  If they don't, they will be
+        created. 
+        
+        In the future, if any steps need to be done when the database is 
+        started, they should be added here.
+        
+        Args:
+            None
+            
+        Returns:
+            None
+        """  
+        
+        # Check if the tables exist in the database.  If they don't, create it.
         sql = "SELECT COUNT(*) " \
               "  FROM sqlite_master " \
               " WHERE TYPE = 'table' " \
               "   AND NAME = 'TOKEN';"
         
-        table_check = self.__execute(sql, (), False)
+        table_check = self.__execute(sql, (), PARM_RETURN_ONE)
         
         if table_check[0] == 0:
             sql = "CREATE TABLE `TOKEN` ( " \
-	              "  `TOKEN` TEXT NOT NULL UNIQUE, " \
-	              "  PRIMARY KEY(`TOKEN`));"
-            sql_result = self.__execute(sql, (), False)
+                  "  `TOKEN` TEXT NOT NULL UNIQUE, " \
+                  "  PRIMARY KEY(`TOKEN`));"
+            self.__execute(sql, (), PARM_RETURN_ONE)
             
             sql = "CREATE TABLE `SERVER` ( " \
                   "  `SERVER_NAME` TEXT NOT NULL, " \
@@ -58,7 +114,7 @@ class Database(object):
                   "  `SOURCE`      TEXT, " \
                   "  PRIMARY KEY(`SERVER_NAME`));"
             
-            sql_result = self.__execute(sql, (), False)
+            self.__execute(sql, (), PARM_RETURN_ONE)
             
             sql = "CREATE TABLE `SERVER_ADDR` ( " \
                   "  `SERVER_NAME` TEXT NOT NULL, " \
@@ -68,11 +124,23 @@ class Database(object):
                   "  `ALWAYS_USE`  TEXT, " \
                   "  PRIMARY KEY(`SERVER_NAME`,`ADDRESS`,`PORT`));"
                   
-            sql_result = self.__execute(sql, (), False)
+            self.__execute(sql, (), PARM_RETURN_ONE)
         
-    def get_stored_token(self):
+    def get_token(self):
+        """Retrieve the Plex token.
+        
+        Plex requires a token in order to use the API.  This method will 
+        retrieve the token that has been saved in teh database.
+        
+        Args:
+            None
+            
+        Returns:
+            The token for Uffizi to use to interact with the Plext API.
+        """
+        
         sql = "SELECT TOKEN FROM TOKEN"
-        sql_result = self.__execute(sql, (), False)
+        sql_result = self.__execute(sql, (), PARM_RETURN_ONE)
         
         if sql_result is None or sql_result[0] == "":
             return ""
@@ -80,16 +148,25 @@ class Database(object):
             return sql_result[0]
             
     def save_token(self, token):
+        """Save a Plex token to the database.
+        
+        Args:
+            token (str): The value that needs to be saved to the database.
+            
+        Returns:
+            None
+        """
+        
         # Clear any existing token values (there should only be one).
         sql = "DELETE FROM TOKEN;"
-        sql_result = self.__execute(sql, (), False)
+        self.__execute(sql, (), PARM_RETURN_ONE)
         
         # Insert the new token.
         parms = (token,)
         sql = "INSERT INTO TOKEN (TOKEN)" \
               "VALUES (?)"
               
-        sql_result = self.__execute(sql, parms,  False)
+        self.__execute(sql, parms,  PARM_RETURN_ONE)
         self.conn.commit()
                     
     def commit(self):
@@ -99,13 +176,26 @@ class Database(object):
         self.conn.close()
         
     def server_exists(self, server_name):
+        """Determines if a server record exists in the table SERVER.
+        
+        Based on the name of the server provided in the server_name parameter, 
+        determines if a record exists in the SERVER table with that name.
+        
+        Args:
+            server_name (str): The name of the server to lookup.
+            
+        Returns:
+            True if the server exists in the SERVER table.
+            False if the server doesn't exist in the SERVER table.
+        """
+        
         parms = (server_name,)
         
         sql = "SELECT COUNT(*) " \
               "  FROM SERVER " \
               " WHERE SERVER_NAME = ?" 
         
-        row_count = self.__execute(sql, parms, False)
+        row_count = self.__execute(sql, parms, PARM_RETURN_ONE)
         
         if row_count[0] > 0:
             return True
@@ -113,6 +203,22 @@ class Database(object):
             return False
             
     def server_addr_exists(self, server_name, address, port):
+        """Determines if a server address record exists in the tabe SERVER_ADDR.
+        
+        Based ont the name, IP address, and port number provided in the input 
+        parameters, determines if a record exists in the SERVER_ADDR table with
+        those values. 
+        
+        Args:
+            server_name (str): The name of the server to lookup.
+            address (str): The IP address to lookup.
+            port (str): The port number to lookup.
+            
+        Returns:
+            True if a record is found in the SERVER_ADDR table.
+            False if a record is not fund in the SERVER_ADDR table.
+        """
+        
         parms = (server_name, address, port)
         
         sql = "SELECT COUNT(*) " \
@@ -121,7 +227,7 @@ class Database(object):
               "   AND ADDRESS = ? " \
               "   AND PORT = ?" 
         
-        row_count = self.__execute(sql, parms, False)
+        row_count = self.__execute(sql, parms, PARM_RETURN_ONE)
         
         if row_count[0] > 0:
             return True
@@ -129,6 +235,17 @@ class Database(object):
             return False
         
     def insert_server(self, server_name, platform, source):
+        """Inserts a record into the SERVER table.
+        
+        Args:
+            server_name (str): The name of the server.
+            platform (str): The OS platform used by the server.
+            source (str): The source of the information.
+            
+        Returns:
+            None
+        """
+        
         parms = (server_name, platform, source)
         
         sql = "INSERT INTO SERVER " \
@@ -136,9 +253,21 @@ class Database(object):
               "VALUES " \
               "  (?,?,?)"
               
-        self.__execute(sql, parms, False)
+        self.__execute(sql, parms, PARM_RETURN_ONE)
         
     def insert_server_addr(self, server_name, address, port, valid):
+        """Inserts a record into the SERVER_ADDR table.
+        
+        Args:
+            server_name (str): The name of the server.
+            address (str): The IP address for the server.
+            port (str): The port for the server.
+            valid (str): True/false value on whether or not the server can be
+                reached.
+                
+        Returns:
+            None
+        """
         parms = (server_name, address, port, valid)
         
         sql = "INSERT INTO SERVER_ADDR " \
@@ -146,18 +275,42 @@ class Database(object):
               "VALUES " \
               "  (?, ?, ?, ?, '')"
               
-        self.__execute(sql, parms, False)
+        self.__execute(sql, parms, PARM_RETURN_ONE)
         
     def update_server(self, server_name, platform):
+        """Update the platform value for a record in the SERVER table.
+        
+        Args:
+            server_name (str): The name of the server to update.
+            platfomr (str): The new value for the platform column.
+            
+        Returns:
+            None
+        """
+        
         parms = (platform, server_name)
         
         sql = "UPDATE SERVER " \
               "   SET PLATFORM = ? " \
               " WHERE SERVER_NAME = ?"
               
-        self.__execute(sql, parms, False)
+        self.__execute(sql, parms, PARM_RETURN_ONE)
         
     def update_server_addr(self, server_name, address, port, valid, always):
+        """Update the VALID and ALWAYS_USE columns for a record in the 
+           SERVER_ADDR table.
+           
+        Args:
+            server_name (str): The name of the server to update.
+            address (str): The IP address of the server to update.
+            port (str): The port of the server to update.
+            valid (str): The new value for the VALID column.
+            always (str): The new value for the ALWAYS_USER column.
+        
+        Returns:
+            None
+        """
+        
         parms = (valid, always, server_name, address, port)
         
         logger.debug('parms', parms)
@@ -169,9 +322,20 @@ class Database(object):
               "   AND ADDRESS = ? " \
               "   AND PORT = ? "
               
-        self.__execute(sql, parms, False)
+        self.__execute(sql, parms, PARM_RETURN_ONE)
               
     def get_servers(self):
+        """Returns the SERVER_NAME and PLATFORM for all servers in the SERVER
+        table.
+        
+        Args:
+            None
+            
+        Returns:
+            A list of tuples for each record in the SERVER table. The tupple
+            contains the following elements:  
+                SERVER_NAME, PLATFORM
+        """
         
         logger.info("Getting servers")
         
@@ -180,14 +344,24 @@ class Database(object):
               "  FROM SERVER " \
               " ORDER BY 1;"
               
-        return self.__execute(sql, (), True)
+        return self.__execute(sql, (), PARM_RETURN_ALL)
         
     def get_server_addr(self, server, mode="all"):
-        # Valid mode options:
-        #   all - return all address/ports for a server
-        #   valid - return only identified valid address/port combinations
-        #   invalid - Return only invalid address/port combinations
-        #   always - Return only those addresses marked to always use
+        """Returns the SERVER_ADDR records for a server.
+        
+        Args:
+            server (str): The name of the server to get data for.
+            mode (str): Determines which records to return.  Valid values are:
+                all - return all address/ports for a server
+                valid - return only identified valid address/port combinations
+                invalid - Return only invalid address/port combinations
+                always - Return only those addresses marked to always use
+                
+        Returns:
+            A list of tuples for each record from the SERVER_ADDR table. The 
+            tuple contains the following elements:
+                ADDRESS, PORT, VALID, ALWAYS_USE
+        """
         
         parms = (server,)
         
@@ -207,37 +381,49 @@ class Database(object):
             
         sql += " ORDER BY 1 DESC, 2"
         
-        server_details = self.__execute(sql, parms, True)
+        server_details = self.__execute(sql, parms, PARM_RETURN_ALL)
         
         return server_details
         
-    def update_valid_server_add(self, server, address, port, valid):
-        parms = (server, address, port, valid)
-        
-        sql = "UPDATE SERVER_ADDR " \
-              "   SET VALID = ? " \
-              " WHERE SERVER_NAME = ?" \
-              "   AND ADDRESSS    = ?" \
-              "   AND PORT        = ?"
-              
-        retval = self.__execute(sql, parms, False)
+    #def update_valid_server_add(self, server, address, port, valid):
+    #    parms = (server, address, port, valid)
+    #    
+    #    sql = "UPDATE SERVER_ADDR " \
+    #          "   SET VALID = ? " \
+    #          " WHERE SERVER_NAME = ?" \
+    #          "   AND ADDRESSS    = ?" \
+    #          "   AND PORT        = ?"
+    #          
+    #    retval = self.__execute(sql, parms, False)
         
     def delete_server(self, server):
+        """Delete a server from the database.
+        
+        Will delete all records from SERVER and SERVER_ADDR tables for the 
+        provided server.
+        
+        Args:
+            server (str): The name of the server to delete.
+            
+        Returns:
+            None
+        """
+        
         parms = (server,)
         
         sql = "DELETE FROM SERVER_ADDR" \
               " WHERE SERVER_NAME = ? "
-        retval = self.__execute(sql, parms)
+        self.__execute(sql, parms)
         
         sql = "DELETE FROM SERVER" \
               " WHERE SERVER_NAME = ?"
-        retval = self.__execute(sql, parms)
+        self.__execute(sql, parms)
         
-    def get_attributes(self, server):
-        parms = (server,)
-        
-        sql = "SELECT * " \
-              "  FROM SERVER " \
-              " WHERE SERVER_NAME = ?"
-              
-        return self.__execute(sql, parms, False)
+    # def get_attributes(self, server):
+    #    parms = (server,)
+    #    
+    #    sql = "SELECT * " \
+    #          "  FROM SERVER " \
+    #          " WHERE SERVER_NAME = ?"
+    #          
+    #    return self.__execute(sql, parms, PARM_RETURN_ONE)

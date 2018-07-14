@@ -23,16 +23,16 @@ PLEX_TOKEN_PARM = "X-Plex-Token="
 LOG_FILE = "uffizi.log"
 
 # Messages
-MSG_TXT = {"ERR_MISSING_DB":"Cannot find database file.  Restart Uffizi "
-               "from the command line."
-          ,"SERVER_UNREACHABLE":"Cannot reach the requested server.  Check "
-               "to make sure the server is online."
-          ,"EXPIRED_TOKEN":"It appears as if the plex.tv token Uffizi was "
-               "using has expired.  Please sign in again in order  to get a "
-               "new token."
-          ,"PLEX_TV_UNREACHABLE":"Cannot reach plex.tv.  Try adding the "
-               "server manually."
-          ,"SERVER_INVALID":"Server '{0}' does not exist in Uffizi."}
+MSG_TXT = {"ERR_MISSING_DB": "Cannot find database file.  Restart Uffizi from "
+                             "the command line.",
+           "SERVER_UNREACHABLE": "Cannot reach the requested server.  Check to "
+                                 "make sure the server is online.",
+           "EXPIRED_TOKEN": "It appears as if the plex.tv token Uffizi was "
+                            "using has expired.  Please sign in again in order "
+                            "to get a new token.",
+           "PLEX_TV_UNREACHABLE": "Cannot reach plex.tv.  Try adding the "
+                                  "server manually.",
+           "SERVER_INVALID": "Server '{0}' does not exist in Uffizi."}
                                  
 # Globals
 arg_debug = False
